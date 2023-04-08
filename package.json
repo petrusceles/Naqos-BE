@@ -1,0 +1,10 @@
+{
+  "name": "Naqos-BE",
+  "version": "1.0.0",
+  "description": "Backend API for Naqos Web App",
+  "main": "app.js",
+  "repository": "https://github.com/petrusceles",
+  "author": "petrusceles",
+  "license": "MIT",
+  "private": true
+}
