@@ -1,13 +1,6 @@
-const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
-
-require("dotenv").config();
-
-mongoose.connect(
-  `mongodb+srv://naqosdb:${process.env.DB_PASSWORD}@naqosdb.ppdjsum.mongodb.net/?retryWrites=true&w=majority`,
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+require('./config/db');
 
 app.use(express.json());
 app.listen(process.env.PORT || 2000, () => {
