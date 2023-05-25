@@ -8,6 +8,7 @@ const Kost = mongoose.model("Kost", {
   user_id: {
     type: mongoose.SchemaTypes.ObjectId,
     require: true,
+    ref:"User"
   },
   address: {
     type: String,
@@ -28,10 +29,12 @@ const Kost = mongoose.model("Kost", {
   type_id: {
     type: mongoose.SchemaTypes.ObjectId,
     require: true,
+    ref:"KostType"
   },
   facilities_id: {
     type: [mongoose.SchemaTypes.ObjectId],
     require: true,
+    ref:"KostFacility"
   },
   regulations: {
     type: [String],

@@ -20,6 +20,7 @@ const User = mongoose.model("User", {
   role_id: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true,
+    ref: "Role",
   },
   email: {
     type: String,

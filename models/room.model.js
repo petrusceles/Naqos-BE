@@ -8,6 +8,7 @@ const Room = mongoose.model("Room", {
   facilities_id: {
     type: [mongoose.SchemaTypes.ObjectId],
     require: true,
+    ref:"RoomFacility"
   },
   room_total: {
     type: mongoose.SchemaTypes.Number,
@@ -36,6 +37,7 @@ const Room = mongoose.model("Room", {
   kost_id: {
     type: mongoose.SchemaTypes.ObjectId,
     require: true,
+    ref:"Kost"
   },
 });
 
