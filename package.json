@@ -20,5 +20,6 @@
   },
   "scripts": {
     "dev": "nodemon app.js"
-  }
+  },
+  "packageManager": "yarn@3.5.1"
 }

@@ -12,4 +12,14 @@ routes.post(
   KostFacilityControllers.createKostFacility
 );
 
+routes.get("/", KostFacilityControllers.findAllKostFacilities);
+routes.get("/:id", KostFacilityControllers.findKostFacilityById);
+routes.put(
+  "/:id",
+  upload.single("icon"),
+  fileEncoder.fileEncoder,
+  KostFacilityControllers.updateKostFacilityById
+);
+routes.delete("/:id", KostFacilityControllers.deleteKostFacilityById);
+
 module.exports = routes;

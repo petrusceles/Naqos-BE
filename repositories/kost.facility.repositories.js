@@ -1,17 +1,22 @@
 const KostFacility = require("../models/kost.facility.model");
 const mongoose = require("mongoose");
 
-const findKostFacilityByName = async ({ name }) => {
+const findKostFacilitiesByNameRepo = async ({ name }) => {
   const kostFacility = await KostFacility.where("name").equals(name).limit(1);
   return kostFacility;
 };
 
-const findAllKostFacilities = async () => {
+const findKostFacilityByIdRepo = async ({id}) => {
+  const kostFacility = await KostFacility.findById(id)
+  return kostFacility
+}
+
+const findAllKostFacilitiesRepo = async () => {
   const kostFacilities = await KostFacility.find();
   return kostFacilities;
 };
 
-const createKostFacility = async ({ name, icon_url }) => {
+const createKostFacilityRepo = async ({ name, icon_url }) => {
   const newKostFacility = await KostFacility.create({
     name,
     icon_url,
@@ -19,7 +24,7 @@ const createKostFacility = async ({ name, icon_url }) => {
   return newKostFacility;
 };
 
-const updateKostFacilityById = async ({ id, name, icon_url }) => {
+const updateKostFacilityByIdRepo = async ({ id, name, icon_url }) => {
   const updatedKostFacility = await KostFacility.updateOne(
     { _id: id },
     { $set: { name: name, icon_url: icon_url } }
@@ -27,15 +32,16 @@ const updateKostFacilityById = async ({ id, name, icon_url }) => {
   return updatedKostFacility;
 };
 
-const deleteKostFacilityById = async ({ id }) => {
+const deleteKostFacilityByIdRepo = async ({ id }) => {
   const deletedKostFacility = await KostFacility.deleteOne({ _id: id });
   return deletedKostFacility;
 };
 
 module.exports = {
-  findKostFacilityByName,
-  findAllKostFacilities,
-  createKostFacility,
-  updateKostFacilityById,
-  deleteKostFacilityById,
+  findKostFacilitiesByNameRepo,
+  findAllKostFacilitiesRepo,
+  createKostFacilityRepo,
+  updateKostFacilityByIdRepo,
+  deleteKostFacilityByIdRepo,
+  findKostFacilityByIdRepo
 };

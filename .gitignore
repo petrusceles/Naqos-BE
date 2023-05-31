@@ -2,3 +2,5 @@ node_modules/*
 *.lock
 .env
 *.log
+.yarn
+.vscode
