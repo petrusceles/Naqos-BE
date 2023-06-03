@@ -1,11 +1,11 @@
 const cloudinary = require("../config/cloudinary");
-const KostFacilityRepositories = require("../repositories/kost.facility.repositories");
+const KostTypeRepositories = require("../repositories/kost.type.repositories");
 
 const uploadToCloudinary = (image) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       image,
-      { folder: "KostFacility" },
+      { folder: "KostType" },
       (err, url) => {
         if (err) return reject(err);
         return resolve(url);
@@ -18,42 +18,36 @@ const getPublicIdFromCloudinaryUrl = (image_url) => {
   return image_url.match(/[^/]+\/[^/]+(?=\.png$)/)[0];
 };
 
-// const deleteImageFromCloudinary = (image_url) => {
-//   return new Promise((resolve,reject)) => {
-//     cloudinary.uploader.destroy()
-//   }
-// }
-
-const createKostFacilityService = async ({ name, icon }) => {
+const createKostTypeService = async ({ name, icon }) => {
   try {
     if (!name || !icon) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: "name or icon field must not be empty",
+        message: "name field must not be empty",
         data: {
-          created_kost_type: null,
+          created_kost_facility: null,
         },
       };
     }
 
-    const isKostFacilityExist =
-      await KostFacilityRepositories.findKostFacilitiesByNameRepo({ name });
-    if (isKostFacilityExist.length) {
+    const isKostTypeExist =
+      await KostTypeRepositories.findKostFacilitiesByNameRepo({ name });
+    if (isKostTypeExist.length) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: "kost type has already exist",
+        message: "kost facility has already exist",
         data: {
-          created_kost_type: null,
+          created_kost_facility: null,
         },
       };
     }
 
     const iconUploadResponse = await uploadToCloudinary(icon);
 
-    const newKostFacility =
-      await KostFacilityRepositories.createKostFacilityRepo({
+    const newKostType =
+      await KostTypeRepositories.createKostTypeRepo({
         name,
         icon_url: iconUploadResponse.url,
       });
@@ -61,9 +55,9 @@ const createKostFacilityService = async ({ name, icon }) => {
     return {
       status: "CREATED",
       statusCode: 201,
-      message: "new kost type added",
+      message: "new kost facility added",
       data: {
-        created_kost_type: newKostFacility,
+        created_kost_facility: newKostType,
       },
     };
   } catch (err) {
@@ -72,7 +66,7 @@ const createKostFacilityService = async ({ name, icon }) => {
       statusCode: 500,
       message: err,
       data: {
-        created_kost_type: null,
+        created_kost_facility: null,
       },
     };
   }
@@ -81,7 +75,7 @@ const createKostFacilityService = async ({ name, icon }) => {
 const findAllKostFacilitiesService = async () => {
   try {
     const kostFacilities =
-      await KostFacilityRepositories.findAllKostFacilitiesRepo();
+      await KostTypeRepositories.findAllKostFacilitiesRepo();
     if (!kostFacilities.length) {
       return {
         status: "NOT_FOUND",
@@ -112,23 +106,23 @@ const findAllKostFacilitiesService = async () => {
   }
 };
 
-const findKostFacilityByIdService = async ({ id }) => {
+const findKostTypeByIdService = async ({ id }) => {
   try {
-    const kostFacility =
-      await KostFacilityRepositories.findKostFacilityByIdRepo({ id });
-    if (!kostFacility) {
+    const kostType =
+      await KostTypeRepositories.findKostTypeByIdRepo({ id });
+    if (!kostType) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no kost facility with id ${id}`,
       };
     }
     return {
       status: "FOUND",
       statusCode: 200,
-      message: "kost type retrieved",
+      message: "kost facility retrieved",
       data: {
-        kost_type: kostFacility,
+        kost_facility: kostType,
       },
     };
   } catch (err) {
@@ -137,13 +131,13 @@ const findKostFacilityByIdService = async ({ id }) => {
       statusCode: 500,
       message: err,
       data: {
-        kost_type: null,
+        kost_facility: null,
       },
     };
   }
 };
 
-const updateKostFacilityByIdService = async ({ id, name, icon }) => {
+const updateKostTypeByIdService = async ({ id, name, icon }) => {
   try {
     if (!name && !icon) {
       return {
@@ -151,32 +145,32 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
         statusCode: 400,
         message: `name or icon is needed`,
         data: {
-          upodated_kost_type: null,
+          upodated_kost_facility: null,
         },
       };
     }
-    const kostFacility =
-      await KostFacilityRepositories.findKostFacilityByIdRepo({ id });
-    if (!kostFacility) {
+    const kostType =
+      await KostTypeRepositories.findKostTypeByIdRepo({ id });
+    if (!kostType) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no kost facility with id ${id}`,
         data: {
-          upodated_kost_type: null,
+          upodated_kost_facility: null,
         },
       };
     }
 
-    const isKostFacilityNewNameExist =
-      await KostFacilityRepositories.findKostFacilitiesByNameRepo({ name });
-    if (isKostFacilityNewNameExist.length) {
+    const isKostTypeNewNameExist =
+      await KostTypeRepositories.findKostFacilitiesByNameRepo({ name });
+    if (isKostTypeNewNameExist.length) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: `kost type named ${name} is already exist`,
+        message: `kost facility named ${name} is already exist`,
         data: {
-          upodated_kost_type: null,
+          upodated_kost_facility: null,
         },
       };
     }
@@ -184,14 +178,14 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
 
     if (icon) {
       const oldIconPublidId = getPublicIdFromCloudinaryUrl(
-        kostFacility.icon_url
+        kostType.icon_url
       );
       cloudinary.uploader.destroy(oldIconPublidId);
       iconUploadResponse = await uploadToCloudinary(icon);
     }
 
-    const updatedKostFacility =
-      await KostFacilityRepositories.updateKostFacilityByIdRepo({
+    const updatedKostType =
+      await KostTypeRepositories.updateKostTypeByIdRepo({
         id,
         name,
         icon_url: iconUploadResponse?.url,
@@ -200,9 +194,9 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
     return {
       status: "SUCCESS",
       statusCode: 200,
-      message: "kost type update",
+      message: "kost facility update",
       data: {
-        kost_type: updatedKostFacility,
+        kost_facility: updatedKostType,
       },
     };
   } catch (err) {
@@ -211,38 +205,38 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
       statusCode: 500,
       message: err,
       data: {
-        upodated_kost_type: null,
+        upodated_kost_facility: null,
       },
     };
   }
 };
 
-const deleteKostFacilityByIdService = async ({ id }) => {
+const deleteKostTypeByIdService = async ({ id }) => {
   try {
-    const toBeDeletedKostFacility =
-      await KostFacilityRepositories.findKostFacilityByIdRepo({ id });
-    if (!toBeDeletedKostFacility) {
+    const toBeDeletedKostType =
+      await KostTypeRepositories.findKostTypeByIdRepo({ id });
+    if (!toBeDeletedKostType) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no kost facility with id ${id}`,
         data: {
-          deleted_kost_type: null,
+          deleted_kost_facility: null,
         },
       };
     }
     const iconPublicId = getPublicIdFromCloudinaryUrl(
-      toBeDeletedKostFacility.icon_url
+      toBeDeletedKostType.icon_url
     );
     cloudinary.uploader.destroy(iconPublicId);
-    const deletedKostFacility =
-      await KostFacilityRepositories.deleteKostFacilityByIdRepo({ id });
+    const deletedKostType =
+      await KostTypeRepositories.deleteKostTypeByIdRepo({ id });
     return {
       status: "SUCCESS",
       statusCode: 200,
-      message: "kost type deleted",
+      message: "kost facility deleted",
       data: {
-        deleted_kost_type: deletedKostFacility,
+        deleted_kost_facility: deletedKostType,
       },
     };
   } catch (err) {
@@ -251,16 +245,16 @@ const deleteKostFacilityByIdService = async ({ id }) => {
       statusCode: 500,
       message: err,
       data: {
-        deleted_kost_type: null,
+        deleted_kost_facility: null,
       },
     };
   }
 };
 
 module.exports = {
-  createKostFacilityService,
+  createKostTypeService,
   findAllKostFacilitiesService,
-  findKostFacilityByIdService,
-  updateKostFacilityByIdService,
-  deleteKostFacilityByIdService,
+  findKostTypeByIdService,
+  updateKostTypeByIdService,
+  deleteKostTypeByIdService,
 };
