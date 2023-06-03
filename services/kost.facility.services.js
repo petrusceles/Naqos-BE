@@ -30,22 +30,23 @@ const createKostFacilityService = async ({ name, icon }) => {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: "name or icon field must not be empty",
+        message: "name field must not be empty",
         data: {
-          created_kost_type: null,
+          created_kost_facility: null,
         },
       };
     }
 
     const isKostFacilityExist =
       await KostFacilityRepositories.findKostFacilitiesByNameRepo({ name });
+    console.log(isKostFacilityExist);
     if (isKostFacilityExist.length) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: "kost type has already exist",
+        message: "kost facility has already exist",
         data: {
-          created_kost_type: null,
+          created_kost_facility: null,
         },
       };
     }
@@ -61,9 +62,9 @@ const createKostFacilityService = async ({ name, icon }) => {
     return {
       status: "CREATED",
       statusCode: 201,
-      message: "new kost type added",
+      message: "new kost facility added",
       data: {
-        created_kost_type: newKostFacility,
+        created_kost_facility: newKostFacility,
       },
     };
   } catch (err) {
@@ -72,7 +73,7 @@ const createKostFacilityService = async ({ name, icon }) => {
       statusCode: 500,
       message: err,
       data: {
-        created_kost_type: null,
+        created_kost_facility: null,
       },
     };
   }
@@ -120,15 +121,15 @@ const findKostFacilityByIdService = async ({ id }) => {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no kost facility with id ${id}`,
       };
     }
     return {
       status: "FOUND",
       statusCode: 200,
-      message: "kost type retrieved",
+      message: "kost facility retrieved",
       data: {
-        kost_type: kostFacility,
+        kost_facility: kostFacility,
       },
     };
   } catch (err) {
@@ -137,7 +138,7 @@ const findKostFacilityByIdService = async ({ id }) => {
       statusCode: 500,
       message: err,
       data: {
-        kost_type: null,
+        kost_facility: null,
       },
     };
   }
@@ -151,7 +152,7 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
         statusCode: 400,
         message: `name or icon is needed`,
         data: {
-          upodated_kost_type: null,
+          upodated_kost_facility: null,
         },
       };
     }
@@ -161,9 +162,9 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no kost facility with id ${id}`,
         data: {
-          upodated_kost_type: null,
+          upodated_kost_facility: null,
         },
       };
     }
@@ -174,9 +175,9 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: `kost type named ${name} is already exist`,
+        message: `kost facility named ${name} is already exist`,
         data: {
-          upodated_kost_type: null,
+          upodated_kost_facility: null,
         },
       };
     }
@@ -200,9 +201,9 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
     return {
       status: "SUCCESS",
       statusCode: 200,
-      message: "kost type update",
+      message: "kost facility update",
       data: {
-        kost_type: updatedKostFacility,
+        kost_facility: updatedKostFacility,
       },
     };
   } catch (err) {
@@ -211,7 +212,7 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
       statusCode: 500,
       message: err,
       data: {
-        upodated_kost_type: null,
+        upodated_kost_facility: null,
       },
     };
   }
@@ -225,9 +226,9 @@ const deleteKostFacilityByIdService = async ({ id }) => {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no kost facility with id ${id}`,
         data: {
-          deleted_kost_type: null,
+          deleted_kost_facility: null,
         },
       };
     }
@@ -240,9 +241,9 @@ const deleteKostFacilityByIdService = async ({ id }) => {
     return {
       status: "SUCCESS",
       statusCode: 200,
-      message: "kost type deleted",
+      message: "kost facility deleted",
       data: {
-        deleted_kost_type: deletedKostFacility,
+        deleted_kost_facility: deletedKostFacility,
       },
     };
   } catch (err) {
@@ -251,7 +252,7 @@ const deleteKostFacilityByIdService = async ({ id }) => {
       statusCode: 500,
       message: err,
       data: {
-        deleted_kost_type: null,
+        deleted_kost_facility: null,
       },
     };
   }
