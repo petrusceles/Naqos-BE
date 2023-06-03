@@ -3,19 +3,15 @@ const KostTypeRepositories = require("../repositories/kost.type.repositories");
 
 const uploadToCloudinary = (image) => {
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      image,
-      { folder: "KostType" },
-      (err, url) => {
-        if (err) return reject(err);
-        return resolve(url);
-      }
-    );
+    cloudinary.uploader.upload(image, { folder: "KostType" }, (err, url) => {
+      if (err) return reject(err);
+      return resolve(url);
+    });
   });
 };
 
 const getPublicIdFromCloudinaryUrl = (image_url) => {
-  return image_url.match(/[^/]+\/[^/]+(?=\.png$)/)[0];
+  return image_url.match(/[^/]+\/[^/]+(?=\.svg$)/)[0];
 };
 
 const createKostTypeService = async ({ name, icon }) => {
@@ -46,11 +42,10 @@ const createKostTypeService = async ({ name, icon }) => {
 
     const iconUploadResponse = await uploadToCloudinary(icon);
 
-    const newKostType =
-      await KostTypeRepositories.createKostTypeRepo({
-        name,
-        icon_url: iconUploadResponse.url,
-      });
+    const newKostType = await KostTypeRepositories.createKostTypeRepo({
+      name,
+      icon_url: iconUploadResponse.url,
+    });
 
     return {
       status: "CREATED",
@@ -108,8 +103,7 @@ const findAllKostFacilitiesService = async () => {
 
 const findKostTypeByIdService = async ({ id }) => {
   try {
-    const kostType =
-      await KostTypeRepositories.findKostTypeByIdRepo({ id });
+    const kostType = await KostTypeRepositories.findKostTypeByIdRepo({ id });
     if (!kostType) {
       return {
         status: "NOT_FOUND",
@@ -149,8 +143,7 @@ const updateKostTypeByIdService = async ({ id, name, icon }) => {
         },
       };
     }
-    const kostType =
-      await KostTypeRepositories.findKostTypeByIdRepo({ id });
+    const kostType = await KostTypeRepositories.findKostTypeByIdRepo({ id });
     if (!kostType) {
       return {
         status: "NOT_FOUND",
@@ -177,19 +170,16 @@ const updateKostTypeByIdService = async ({ id, name, icon }) => {
     let iconUploadResponse;
 
     if (icon) {
-      const oldIconPublidId = getPublicIdFromCloudinaryUrl(
-        kostType.icon_url
-      );
+      const oldIconPublidId = getPublicIdFromCloudinaryUrl(kostType.icon_url);
       cloudinary.uploader.destroy(oldIconPublidId);
       iconUploadResponse = await uploadToCloudinary(icon);
     }
 
-    const updatedKostType =
-      await KostTypeRepositories.updateKostTypeByIdRepo({
-        id,
-        name,
-        icon_url: iconUploadResponse?.url,
-      });
+    const updatedKostType = await KostTypeRepositories.updateKostTypeByIdRepo({
+      id,
+      name,
+      icon_url: iconUploadResponse?.url,
+    });
 
     return {
       status: "SUCCESS",
@@ -213,8 +203,9 @@ const updateKostTypeByIdService = async ({ id, name, icon }) => {
 
 const deleteKostTypeByIdService = async ({ id }) => {
   try {
-    const toBeDeletedKostType =
-      await KostTypeRepositories.findKostTypeByIdRepo({ id });
+    const toBeDeletedKostType = await KostTypeRepositories.findKostTypeByIdRepo(
+      { id }
+    );
     if (!toBeDeletedKostType) {
       return {
         status: "NOT_FOUND",
@@ -229,8 +220,9 @@ const deleteKostTypeByIdService = async ({ id }) => {
       toBeDeletedKostType.icon_url
     );
     cloudinary.uploader.destroy(iconPublicId);
-    const deletedKostType =
-      await KostTypeRepositories.deleteKostTypeByIdRepo({ id });
+    const deletedKostType = await KostTypeRepositories.deleteKostTypeByIdRepo({
+      id,
+    });
     return {
       status: "SUCCESS",
       statusCode: 200,
