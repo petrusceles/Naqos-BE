@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Role = mongoose.model("Role", {
-  role_name: {
+  name: {
     type: String,
     required: true,
   },
