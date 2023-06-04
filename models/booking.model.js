@@ -4,19 +4,19 @@ const Booking = mongoose.model("Booking", {
   user_id: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true,
-    ref:"User"
+    ref: "User",
   },
   room_id: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true,
-    ref:"Room"
+    ref: "Room",
   },
   status_id: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true,
-    ref:"BookingStatus"
+    ref: "BookingStatus",
   },
-  proof_photo_url: {
+  prove_photo_url: {
     type: String,
     required: true,
   },

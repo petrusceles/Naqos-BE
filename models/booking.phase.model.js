@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const BookingStatus = mongoose.model("BookingStatus", {
+const BookingPhase = mongoose.model("BookingPhase", {
   name: {
     type: String,
     required: true,
   },
 });
 
-module.exports = BookingStatus;
+module.exports = BookingPhase;
