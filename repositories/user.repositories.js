@@ -7,6 +7,7 @@ const createUserRepo = async ({
   password,
   phone_number,
   is_verified,
+  avatar_url,
 }) => {
   const createdUser = await User.create({
     name,
@@ -15,6 +16,7 @@ const createUserRepo = async ({
     password,
     phone_number,
     is_verified,
+    avatar_url,
   });
   return createdUser;
 };
@@ -29,6 +31,21 @@ const findUserByIdRepo = async ({ id }) => {
   return user;
 };
 
+const findUsersByNameRepo = async ({ name }) => {
+  const users = await User.where("name").equals(name);
+  return users;
+};
+
+const findUsersByEmailRepo = async ({ email }) => {
+  const users = await User.where("email").equals(email);
+  return users;
+};
+
+const findUsersByPhoneNumber = async ({ phone_number }) => {
+  const users = await User.where("phone_number").equals(phone_number);
+  return users;
+};
+
 const updateUserByIdRepo = async ({
   id,
   name,
@@ -37,10 +54,11 @@ const updateUserByIdRepo = async ({
   password,
   phone_number,
   is_verified,
+  avatar_url,
 }) => {
   const updatedUser = await User.updateOne(
     { _id: id },
-    { name, role, email, password, phone_number, is_verified }
+    { name, role, email, password, phone_number, is_verified, avatar_url }
   );
   return updatedUser;
 };
@@ -58,4 +76,7 @@ module.exports = {
   findUserByIdRepo,
   updateUserByIdRepo,
   deleteUserByIdRepo,
+  findUsersByNameRepo,
+  findUsersByEmailRepo,
+  findUsersByPhoneNumber,
 };

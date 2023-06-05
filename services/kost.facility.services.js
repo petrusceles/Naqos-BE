@@ -55,7 +55,7 @@ const createKostFacilityService = async ({ name, icon }) => {
     const newKostFacility =
       await KostFacilityRepositories.createKostFacilityRepo({
         name,
-        icon_url: iconUploadResponse.url,
+        icon_url: iconUploadResponse.secure_url,
       });
 
     return {
@@ -194,7 +194,7 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
       await KostFacilityRepositories.updateKostFacilityByIdRepo({
         id,
         name,
-        icon_url: iconUploadResponse?.url,
+        icon_url: iconUploadResponse?.secure_url,
       });
 
     return {

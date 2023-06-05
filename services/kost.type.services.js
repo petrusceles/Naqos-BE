@@ -44,7 +44,7 @@ const createKostTypeService = async ({ name, icon }) => {
 
     const newKostType = await KostTypeRepositories.createKostTypeRepo({
       name,
-      icon_url: iconUploadResponse.url,
+      icon_url: iconUploadResponse.secure_url,
     });
 
     return {
@@ -178,7 +178,7 @@ const updateKostTypeByIdService = async ({ id, name, icon }) => {
     const updatedKostType = await KostTypeRepositories.updateKostTypeByIdRepo({
       id,
       name,
-      icon_url: iconUploadResponse?.url,
+      icon_url: iconUploadResponse?.secure_url,
     });
 
     return {

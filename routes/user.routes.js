@@ -1,0 +1,19 @@
+const express = require("express");
+const routes = express.Router();
+const UserControllers = require("../controllers/user.controllers.js");
+
+const upload = require("../middlewares/fileUpload");
+const fileEncoder = require("../middlewares/fileEncoder");
+
+routes.post("/", UserControllers.createUser);
+routes.get("/", UserControllers.findAllUser);
+routes.get("/:id", UserControllers.findUserById);
+routes.put(
+  "/:id",
+  upload.single("avatar"),
+  fileEncoder.fileEncoder,
+  UserControllers.updateUserById
+);
+routes.delete("/:id", UserControllers.deleteUserById);
+
+module.exports = routes;

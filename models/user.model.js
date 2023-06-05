@@ -4,6 +4,7 @@ const UserSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     role: {
       type: mongoose.SchemaTypes.ObjectId,
@@ -13,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -21,6 +23,7 @@ const UserSchema = new mongoose.Schema(
     phone_number: {
       type: String,
       required: false,
+      unique: true,
     },
     is_verified: {
       type: Boolean,

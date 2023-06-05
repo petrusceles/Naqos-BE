@@ -55,7 +55,7 @@ const createRoomFacilityService = async ({ name, icon }) => {
     const newRoomFacility =
       await RoomFacilityRepositories.createRoomFacilityRepo({
         name,
-        icon_url: iconUploadResponse.url,
+        icon_url: iconUploadResponse.secure_url,
       });
 
     return {
@@ -194,7 +194,7 @@ const updateRoomFacilityByIdService = async ({ id, name, icon }) => {
       await RoomFacilityRepositories.updateRoomFacilityByIdRepo({
         id,
         name,
-        icon_url: iconUploadResponse?.url,
+        icon_url: iconUploadResponse?.secure_url,
       });
 
     return {
