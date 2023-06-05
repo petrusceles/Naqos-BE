@@ -5,19 +5,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    user_name: {
-      type: String,
-      required: true,
-    },
-    front_name: {
-      type: String,
-      required: true,
-    },
-    last_name: {
-      type: String,
-      required: true,
-    },
-    role_id: {
+    role: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "Role",
@@ -28,15 +16,19 @@ const UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     phone_number: {
       type: String,
-      required: true,
+      required: false,
     },
     is_verified: {
       type: Boolean,
       required: true,
+    },
+    avatar_url: {
+      type: String,
+      require: false,
     },
   },
   { timestamps: true }
