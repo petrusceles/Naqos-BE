@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
-
-const BookingPhase = mongoose.model("BookingPhase", {
-  name: {
-    type: String,
-    required: true,
+const BookingPhaseSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
   },
-});
+  { timestamps: true }
+);
+const BookingPhase = mongoose.model("BookingPhase", BookingPhaseSchema);
 
 module.exports = BookingPhase;
