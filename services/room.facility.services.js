@@ -1,28 +1,6 @@
-const cloudinary = require("../config/cloudinary");
 const RoomFacilityRepositories = require("../repositories/room.facility.repositories");
-
-const uploadToCloudinary = (image) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      image,
-      { folder: "RoomFacility" },
-      (err, url) => {
-        if (err) return reject(err);
-        return resolve(url);
-      }
-    );
-  });
-};
-
-const getPublicIdFromCloudinaryUrl = (image_url) => {
-  return image_url.match(/[^/]+\/[^/]+(?=\.png$)/)[0];
-};
-
-// const deleteImageFromCloudinary = (image_url) => {
-//   return new Promise((resolve,reject)) => {
-//     cloudinary.uploader.destroy()
-//   }
-// }
+const CloudinaryUtils = require("../utils/cloudinary.utils.js");
+const cloudinary = require("../config/cloudinary.js");
 
 const createRoomFacilityService = async ({ name, icon }) => {
   try {
@@ -50,7 +28,10 @@ const createRoomFacilityService = async ({ name, icon }) => {
       };
     }
 
-    const iconUploadResponse = await uploadToCloudinary(icon);
+    const iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+      icon,
+      "RoomFacility"
+    );
 
     const newRoomFacility =
       await RoomFacilityRepositories.createRoomFacilityRepo({
@@ -183,11 +164,14 @@ const updateRoomFacilityByIdService = async ({ id, name, icon }) => {
     let iconUploadResponse;
 
     if (icon) {
-      const oldIconPublidId = getPublicIdFromCloudinaryUrl(
+      const oldIconPublidId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
         roomFacility.icon_url
       );
       cloudinary.uploader.destroy(oldIconPublidId);
-      iconUploadResponse = await uploadToCloudinary(icon);
+      iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+        icon,
+        "RoomFacility"
+      );
     }
 
     const updatedRoomFacility =
@@ -231,7 +215,7 @@ const deleteRoomFacilityByIdService = async ({ id }) => {
         },
       };
     }
-    const iconPublicId = getPublicIdFromCloudinaryUrl(
+    const iconPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
       toBeDeletedRoomFacility.icon_url
     );
     cloudinary.uploader.destroy(iconPublicId);

@@ -1,29 +1,7 @@
-const cloudinary = require("../config/cloudinary");
+// const cloudinary = require("../config/cloudinary");
 const KostFacilityRepositories = require("../repositories/kost.facility.repositories");
-
-const uploadToCloudinary = (image) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      image,
-      { folder: "KostFacility" },
-      (err, url) => {
-        if (err) return reject(err);
-        return resolve(url);
-      }
-    );
-  });
-};
-
-const getPublicIdFromCloudinaryUrl = (image_url) => {
-  return image_url.match(/[^/]+\/[^/]+(?=\.png$)/)[0];
-};
-
-// const deleteImageFromCloudinary = (image_url) => {
-//   return new Promise((resolve,reject)) => {
-//     cloudinary.uploader.destroy()
-//   }
-// }
-
+const CloudinaryUtils = require("../utils/cloudinary.utils.js");
+const cloudinary = require("../config/cloudinary.js");
 const createKostFacilityService = async ({ name, icon }) => {
   try {
     if (!name || !icon) {
@@ -50,7 +28,10 @@ const createKostFacilityService = async ({ name, icon }) => {
       };
     }
 
-    const iconUploadResponse = await uploadToCloudinary(icon);
+    const iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+      icon,
+      "KostFacility"
+    );
 
     const newKostFacility =
       await KostFacilityRepositories.createKostFacilityRepo({
@@ -183,11 +164,14 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
     let iconUploadResponse;
 
     if (icon) {
-      const oldIconPublidId = getPublicIdFromCloudinaryUrl(
+      const oldIconPublidId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
         kostFacility.icon_url
       );
       cloudinary.uploader.destroy(oldIconPublidId);
-      iconUploadResponse = await uploadToCloudinary(icon);
+      iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+        icon,
+        "KostFacility"
+      );
     }
 
     const updatedKostFacility =
@@ -231,7 +215,7 @@ const deleteKostFacilityByIdService = async ({ id }) => {
         },
       };
     }
-    const iconPublicId = getPublicIdFromCloudinaryUrl(
+    const iconPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
       toBeDeletedKostFacility.icon_url
     );
     cloudinary.uploader.destroy(iconPublicId);

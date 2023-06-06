@@ -22,27 +22,33 @@ const createUserRepo = async ({
 };
 
 const findAllUsersRepo = async () => {
-  const users = await User.find();
+  const users = await User.find().select("-password").populate("role");
   return users;
 };
 
 const findUserByIdRepo = async ({ id }) => {
-  const user = await User.findById(id);
+  const user = await User.findById(id,"-password").populate("role");
   return user;
 };
 
 const findUsersByNameRepo = async ({ name }) => {
-  const users = await User.where("name").equals(name);
+  const users = await User.where("name").equals(name).select("-password").populate("role");
   return users;
 };
 
 const findUsersByEmailRepo = async ({ email }) => {
-  const users = await User.where("email").equals(email);
+  const users = await User.where("email")
+    .equals(email)
+    .select("-password")
+    .populate("role");
   return users;
 };
 
 const findUsersByPhoneNumber = async ({ phone_number }) => {
-  const users = await User.where("phone_number").equals(phone_number);
+  const users = await User.where("phone_number")
+    .equals(phone_number)
+    .select("-password")
+    .populate("role");
   return users;
 };
 

@@ -1,19 +1,6 @@
-const cloudinary = require("../config/cloudinary");
 const KostTypeRepositories = require("../repositories/kost.type.repositories");
-
-const uploadToCloudinary = (image) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(image, { folder: "KostType" }, (err, url) => {
-      if (err) return reject(err);
-      return resolve(url);
-    });
-  });
-};
-
-const getPublicIdFromCloudinaryUrl = (image_url) => {
-  return image_url.match(/[^/]+\/[^/]+(?=\.svg$)/)[0];
-};
-
+const CloudinaryUtils = require("../utils/cloudinary.utils.js");
+const cloudinary = require("../config/cloudinary.js");
 const createKostTypeService = async ({ name, icon }) => {
   try {
     if (!name || !icon) {
@@ -26,7 +13,6 @@ const createKostTypeService = async ({ name, icon }) => {
         },
       };
     }
-
     const isKostTypeExist =
       await KostTypeRepositories.findKostFacilitiesByNameRepo({ name });
     if (isKostTypeExist.length) {
@@ -40,7 +26,10 @@ const createKostTypeService = async ({ name, icon }) => {
       };
     }
 
-    const iconUploadResponse = await uploadToCloudinary(icon);
+    const iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+      icon,
+      "KostType"
+    );
 
     const newKostType = await KostTypeRepositories.createKostTypeRepo({
       name,
@@ -170,9 +159,14 @@ const updateKostTypeByIdService = async ({ id, name, icon }) => {
     let iconUploadResponse;
 
     if (icon) {
-      const oldIconPublidId = getPublicIdFromCloudinaryUrl(kostType.icon_url);
+      const oldIconPublidId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
+        kostType.icon_url
+      );
       cloudinary.uploader.destroy(oldIconPublidId);
-      iconUploadResponse = await uploadToCloudinary(icon);
+      iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+        icon,
+        "KostType"
+      );
     }
 
     const updatedKostType = await KostTypeRepositories.updateKostTypeByIdRepo({
@@ -216,7 +210,7 @@ const deleteKostTypeByIdService = async ({ id }) => {
         },
       };
     }
-    const iconPublicId = getPublicIdFromCloudinaryUrl(
+    const iconPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
       toBeDeletedKostType.icon_url
     );
     cloudinary.uploader.destroy(iconPublicId);

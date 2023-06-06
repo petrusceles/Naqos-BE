@@ -1,21 +1,8 @@
 const UserRepositories = require("../repositories/user.repositories.js");
 const RoleRepositories = require("../repositories/role.repositories.js");
 const bcrypt = require("bcrypt");
-const cloudinary = require("../config/cloudinary");
-
-const uploadToCloudinary = (image) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(image, { folder: "UserAvatar" }, (err, url) => {
-      if (err) return reject(err);
-      return resolve(url);
-    });
-  });
-};
-
-const getPublicIdFromCloudinaryUrl = (image_url) => {
-  return image_url.match(/[^/]+\/[^/]+(?=\.png$)/)[0];
-};
-
+const CloudinaryUtils = require("../utils/cloudinary.utils.js");
+const cloudinary = require("../config/cloudinary.js");
 const createUserService = async ({
   name,
   role,
@@ -36,14 +23,10 @@ const createUserService = async ({
         },
       };
     }
-    const hashedPassword = await bcrypt.hash(
-      password,
-      process.env.PASSWORD_SALT
-    );
-
+    const hashedPassword = await bcrypt.hash(password, 11);
     const createdUser = await UserRepositories.createUserRepo({
       name,
-      role: roleData,
+      role: roleData[0],
       email,
       password: hashedPassword,
       phone_number,
@@ -107,7 +90,7 @@ const findAllUsersService = async () => {
 
 const findUserByIdService = async ({ id }) => {
   try {
-    const user = await UserRepositories.findUserByIdService({ id });
+    const user = await UserRepositories.findUserByIdRepo({ id });
     if (!user) {
       return {
         status: "NOT_FOUND",
@@ -148,11 +131,19 @@ const updateUserByIdService = async ({
   avatar,
 }) => {
   try {
-    const updatedUser = await UserRepositories.findUserByIdRepo({ id });
-
+    let updatedUser = await UserRepositories.findUserByIdRepo({ id });
+    if (!updatedUser) {
+      return {
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: "user not found",
+        data: {
+          updated_user: null,
+        },
+      };
+    }
     if (name) {
       const users = await UserRepositories.findUsersByNameRepo({ name });
-
       if (users.length) {
         return {
           status: "BAD_REQUEST",
@@ -169,7 +160,7 @@ const updateUserByIdService = async ({
 
     if (role) {
       const isRoleAvailable = await RoleRepositories.findRolesByNameRepo({
-        name,
+        name: role,
       });
       if (!isRoleAvailable.length) {
         return {
@@ -206,10 +197,7 @@ const updateUserByIdService = async ({
     }
 
     if (password) {
-      const hashedPassword = await bcrypt.hash(
-        password,
-        process.env.PASSWORD_SALT
-      );
+      const hashedPassword = await bcrypt.hash(password, 11);
       updatedUser.password = hashedPassword;
     }
 
@@ -231,11 +219,29 @@ const updateUserByIdService = async ({
     }
 
     if (avatar) {
-      const avatarUploadResponse = await uploadToCloudinary(avatar);
+      const oldAvatarPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
+        updatedUser.avatar_url
+      );
+      const cloudinaryFolder = oldAvatarPublicId.split("/")[0];
+
+      if (
+        oldAvatarPublicId.split("/")[0] !=
+        process.env.CLOUDINARY_BASIC_ASSET_FOLDER
+      ) {
+        cloudinary.uploader.destroy(oldAvatarPublicId);
+      }
+      
+      const avatarUploadResponse = await CloudinaryUtils.uploadToCloudinary(
+        avatar,
+        "UserAvatar"
+      );
       updatedUser.avatar_url = avatarUploadResponse?.secure_url;
     }
 
     await updatedUser.save();
+    if (password) {
+      updatedUser.password = "";
+    }
     return {
       status: "SUCCESS",
       statusCode: 200,
@@ -261,17 +267,24 @@ const deleteUserByIdService = async ({ id }) => {
     const user = await UserRepositories.findUserByIdRepo({ id });
     if (!user) {
       return {
-        status: "BAD_REQUEST",
-        statusCode: 400,
-        message: `phone number has been used by another user`,
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: `user not found`,
         data: {
           deleted_user: null,
         },
       };
     }
 
-    const userAvatarPublicId = getPublicIdFromCloudinaryUrl(user.avatar_url);
-    cloudinary.uploader.destroy(userAvatarPublicId);
+    const userAvatarPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
+      user.avatar_url
+    );
+    if (
+      userAvatarPublicId.split("/")[0] !=
+      process.env.CLOUDINARY_BASIC_ASSET_FOLDER
+    ) {
+      cloudinary.uploader.destroy(userAvatarPublicId);
+    }
 
     const deletedUser = await UserRepositories.deleteUserByIdRepo({ id });
 
