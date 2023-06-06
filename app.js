@@ -2,8 +2,29 @@ const express = require("express");
 const app = express();
 const routes = require("./routes");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const flash = require("express-flash")
 require("dotenv").config();
 app.use(express.json());
+
+require("./config/passport.local.config.js")
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
+app.use(flash())
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use("/api", routes);
 
 mongoose
