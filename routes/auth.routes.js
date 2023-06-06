@@ -5,7 +5,7 @@ const authMiddlewares = require("../middlewares/auth.js");
 const AuthControllers = require("../controllers/auth.controllers.js");
 routes.post(
   "/login",
-  authMiddlewares.checkAuthenticated,
+  authMiddlewares.checkNotAuthenticated,
   passport.authenticate("local", {
     successRedirect: "/api/auth/login/success",
     failureRedirect: "/api/auth/login/failed",

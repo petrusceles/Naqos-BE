@@ -1,4 +1,4 @@
-const checkNotAuthenticated = (req, res, next) => {
+const checkAuthenticated = (req, res, next) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({
       status: "UNAUTHORIZED",
@@ -9,7 +9,7 @@ const checkNotAuthenticated = (req, res, next) => {
   next();
 };
 
-const checkAuthenticated = (req, res, next) => {
+const checkNotAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return res.status(400).json({
       status: "BAD_REQUEST",
