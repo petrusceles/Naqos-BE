@@ -2,17 +2,17 @@ const Kost = require("../models/kost.model.js");
 
 const createKostRepo = async ({
   name,
-  user_id,
+  user,
   address,
   province,
   district,
   subdistrict,
-  type_id,
-  facilities_id,
+  type,
+  facilities,
   regulations,
   bans,
   description,
-  question,
+  questions,
   answers,
   outsides_photos_url,
   inside_photos_url,
@@ -21,17 +21,17 @@ const createKostRepo = async ({
 }) => {
   const kost = await Kost.create({
     name,
-    user_id,
+    user,
     address,
     province,
     district,
     subdistrict,
-    type_id,
-    facilities_id,
+    type,
+    facilities,
     regulations,
     bans,
     description,
-    question,
+    questions,
     answers,
     outsides_photos_url,
     inside_photos_url,
@@ -47,27 +47,45 @@ const findAllKostsRepo = async () => {
   return kost;
 };
 
+const findAllKostsByNameRepo = async ({ name }) => {
+  const kosts = await Kost.where("name")
+    .equals(name)
+    .populate({ path: "user", select: "-password" });
+  return kosts;
+};
+
+const searchAllKostsByKeywordRepo = async ({ keyword }) => {
+  const kosts = await Kost.find({ $text: { $search: keyword } }).populate({
+    path: "user",
+    select: "-password",
+  });
+  return kosts;
+};
+
 const findKostByIdRepo = async ({ id }) => {
-  const kost = await Kost.findById(id);
+  const kost = await Kost.findById(id).populate({
+    path: "user",
+    select: "-password",
+  });
   return kost;
 };
 
 const updateKostByIdRepo = async ({
   id,
   name,
-  user_id,
+  user,
   address,
   province,
   district,
   subdistrict,
-  type_id,
-  facilities_id,
+  type,
+  facilities,
   regulations,
   bans,
   description,
-  question,
+  questions,
   answers,
-  outsides_photos_url,
+  outside_photos_url,
   inside_photos_url,
   bank,
   bank_number,
@@ -79,25 +97,26 @@ const updateKostByIdRepo = async ({
     {
       $set: {
         name,
-        user_id,
+        user,
         address,
         province,
         district,
         subdistrict,
-        type_id,
-        facilities_id,
+        type,
+        facilities,
         regulations,
         bans,
         description,
-        question,
+        questions,
         answers,
-        outsides_photos_url,
+        outside_photos_url,
         inside_photos_url,
         bank,
         bank_number,
       },
     }
   );
+  return updatedKost;
 };
 
 const deleteKostByIdRepo = async ({ id }) => {
@@ -111,4 +130,6 @@ module.exports = {
   findKostByIdRepo,
   updateKostByIdRepo,
   deleteKostByIdRepo,
+  searchAllKostsByKeywordRepo,
+  findAllKostsByNameRepo,
 };

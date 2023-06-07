@@ -5,7 +5,7 @@ const RoomSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    facilities_id: {
+    facilities: {
       type: [mongoose.SchemaTypes.ObjectId],
       require: true,
       ref: "RoomFacility",
@@ -34,7 +34,7 @@ const RoomSchema = new mongoose.Schema(
       type: [String],
       require: true,
     },
-    kost_id: {
+    kost: {
       type: mongoose.SchemaTypes.ObjectId,
       require: true,
       ref: "Kost",

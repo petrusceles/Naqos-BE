@@ -8,18 +8,23 @@ passport.use(
     { usernameField: "email" },
     async (email, password, done) => {
       try {
-        const user = await UserRepositories.findUsersByEmailRepo({ email });
-        if (!user.length) {
+        const users = await UserRepositories.findUsersByEmailRepo({ email });
+        if (!users.length) {
           return done(null, false, { message: `no user with email ${email}` });
         }
         const isPasswordMatched = await bcrypt.compare(
           password,
-          user[0].password
+          users[0].password
         );
         if (!isPasswordMatched) {
           return done(null, false, { message: "password incorrect" });
         }
-        return done(null, user[0], { message: "login success" });
+        // console.log(users[0]);
+        // delete users[0].password
+        const user = users[0].toObject()
+        delete user.password
+        // console.log(user)
+        return done(null, user, { message: "login success" });
       } catch (err) {
         return done(err);
       }

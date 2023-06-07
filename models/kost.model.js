@@ -5,7 +5,7 @@ const KostSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    user_id: {
+    user: {
       type: mongoose.SchemaTypes.ObjectId,
       require: true,
       ref: "User",
@@ -26,12 +26,12 @@ const KostSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    type_id: {
+    type: {
       type: mongoose.SchemaTypes.ObjectId,
       require: true,
       ref: "KostType",
     },
-    facilities_id: {
+    facilities: {
       type: [mongoose.SchemaTypes.ObjectId],
       require: true,
       ref: "KostFacility",
@@ -75,6 +75,15 @@ const KostSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+KostSchema.index({
+  name: "text",
+  address: "text",
+  province: "text",
+  district: "text",
+  subdistrict: "text",
+  description: "text",
+});
 const Kost = mongoose.model("Kost", KostSchema);
 
 module.exports = Kost;

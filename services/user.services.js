@@ -26,14 +26,14 @@ const createUserService = async ({
     const hashedPassword = await bcrypt.hash(password, 11);
     const createdUser = await UserRepositories.createUserRepo({
       name,
-      role: roleData[0],
+      role: roleData[0]._id,
       email,
       password: hashedPassword,
       phone_number,
       is_verified: false,
       avatar_url,
     });
-
+    createdUser.password = "";
     return {
       status: "SUCCESS",
       statusCode: 201,
@@ -129,6 +129,7 @@ const updateUserByIdService = async ({
   password,
   phone_number,
   avatar,
+  is_verified,
 }) => {
   try {
     let updatedUser = await UserRepositories.findUserByIdRepo({ id });
@@ -174,6 +175,9 @@ const updateUserByIdService = async ({
       }
 
       updatedUser.role = isRoleAvailable[0];
+    }
+    if (is_verified !== undefined) {
+      updatedUser.is_verified = is_verified;
     }
 
     if (email) {
@@ -230,7 +234,7 @@ const updateUserByIdService = async ({
       ) {
         cloudinary.uploader.destroy(oldAvatarPublicId);
       }
-      
+
       const avatarUploadResponse = await CloudinaryUtils.uploadToCloudinary(
         avatar,
         "UserAvatar"
