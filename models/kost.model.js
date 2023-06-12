@@ -48,14 +48,6 @@ const KostSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    questions: {
-      type: [String],
-      require: true,
-    },
-    answers: {
-      type: [String],
-      require: true,
-    },
     outside_photos_url: {
       type: [String],
       require: true,
@@ -76,14 +68,26 @@ const KostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-KostSchema.index({
-  name: "text",
-  address: "text",
-  province: "text",
-  district: "text",
-  subdistrict: "text",
-  description: "text",
-});
+KostSchema.index(
+  {
+    name: "text",
+    address: "text",
+    province: "text",
+    district: "text",
+    subdistrict: "text",
+    description: "text",
+  },
+  {
+    weights: {
+      name:6,
+      address:5,
+      province:4,
+      district:3,
+      subdistrict:2,
+      description:1
+    },
+  }
+);
 const Kost = mongoose.model("Kost", KostSchema);
 
 module.exports = Kost;
