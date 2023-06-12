@@ -12,8 +12,6 @@ const createKost = async (req, res) => {
     regulations,
     bans,
     description,
-    questions,
-    answers,
     bank,
     bank_number,
   } = req.body;
@@ -33,13 +31,12 @@ const createKost = async (req, res) => {
       regulations,
       bans,
       description,
-      questions,
-      answers,
       bank,
       bank_number,
       outside_photos: outsidePhotos,
       inside_photos: insidePhotos,
     });
+  //  return res.send(200, { message: "ok" });
   return res.status(statusCode).json({
     status,
     message,
@@ -81,15 +78,16 @@ const updateKostById = async (req, res) => {
     regulations,
     bans,
     description,
-    questions,
-    answers,
     bank,
     bank_number,
+    outside_photos_onhold_url,
+    inside_photos_onhold_url,
   } = req.body;
   const outsidePhotos = req.files.outside_photos;
   const insidePhotos = req.files.inside_photos;
   const user = req.session.passport.user._id;
   const id = req.params.id;
+  
   const { status, statusCode, message, data } =
     await KostService.updateKostByIdService({
       id,
@@ -104,12 +102,12 @@ const updateKostById = async (req, res) => {
       regulations,
       bans,
       description,
-      questions,
-      answers,
       bank,
       bank_number,
       outside_photos: outsidePhotos,
       inside_photos: insidePhotos,
+      outside_photos_onhold_url,
+      inside_photos_onhold_url,
     });
   return res.status(statusCode).json({
     status,
@@ -135,5 +133,5 @@ module.exports = {
   searchAllKostsByKeyword,
   findKostById,
   updateKostById,
-  deleteKostFacilityById
+  deleteKostFacilityById,
 };

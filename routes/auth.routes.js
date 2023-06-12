@@ -1,4 +1,4 @@
-const passport = require("passport");
+const passport = require("../config/passport.local.config.js");
 const express = require("express");
 const routes = express.Router();
 const authMiddlewares = require("../middlewares/auth.js");

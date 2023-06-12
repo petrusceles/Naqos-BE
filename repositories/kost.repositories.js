@@ -12,9 +12,7 @@ const createKostRepo = async ({
   regulations,
   bans,
   description,
-  questions,
-  answers,
-  outsides_photos_url,
+  outside_photos_url,
   inside_photos_url,
   bank,
   bank_number,
@@ -31,9 +29,7 @@ const createKostRepo = async ({
     regulations,
     bans,
     description,
-    questions,
-    answers,
-    outsides_photos_url,
+    outside_photos_url,
     inside_photos_url,
     bank,
     bank_number,
@@ -43,30 +39,45 @@ const createKostRepo = async ({
 };
 
 const findAllKostsRepo = async () => {
-  const kost = await Kost.find();
+  const kost = await Kost.find()
+    .populate({ path: "user", select: "-password" })
+    .populate("facilities")
+    .populate("type");
   return kost;
 };
 
 const findAllKostsByNameRepo = async ({ name }) => {
   const kosts = await Kost.where("name")
     .equals(name)
-    .populate({ path: "user", select: "-password" });
+    .populate({ path: "user", select: "-password" })
+    .populate("facilities")
+    .populate("type");
   return kosts;
 };
 
 const searchAllKostsByKeywordRepo = async ({ keyword }) => {
-  const kosts = await Kost.find({ $text: { $search: keyword } }).populate({
-    path: "user",
-    select: "-password",
-  });
+  let query = {};
+  if (keyword) {
+    query.$text = { $search: keyword };
+  }
+  const kosts = await Kost.find(query)
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .populate("facilities")
+    .populate("type");
   return kosts;
 };
 
 const findKostByIdRepo = async ({ id }) => {
-  const kost = await Kost.findById(id).populate({
-    path: "user",
-    select: "-password",
-  });
+  const kost = await Kost.findById(id)
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .populate("facilities")
+    .populate("type");
   return kost;
 };
 
@@ -83,8 +94,6 @@ const updateKostByIdRepo = async ({
   regulations,
   bans,
   description,
-  questions,
-  answers,
   outside_photos_url,
   inside_photos_url,
   bank,
@@ -107,8 +116,6 @@ const updateKostByIdRepo = async ({
         regulations,
         bans,
         description,
-        questions,
-        answers,
         outside_photos_url,
         inside_photos_url,
         bank,

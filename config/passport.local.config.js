@@ -19,11 +19,8 @@ passport.use(
         if (!isPasswordMatched) {
           return done(null, false, { message: "password incorrect" });
         }
-        // console.log(users[0]);
-        // delete users[0].password
-        const user = users[0].toObject()
-        delete user.password
-        // console.log(user)
+        const user = users[0].toObject();
+        delete user.password;
         return done(null, user, { message: "login success" });
       } catch (err) {
         return done(err);

@@ -1,4 +1,6 @@
 const KostRepositories = require("../repositories/kost.repositories.js");
+const KostTypeRepositories = require("../repositories/kost.type.repositories.js");
+const KostFacilityRepositories = require("../repositories/kost.facility.repositories.js");
 const cloudinary = require("../config/cloudinary.js");
 const CloudinaryUtils = require("../utils/cloudinary.utils.js");
 const KostUtils = require("../utils/kost.utils.js");
@@ -14,8 +16,6 @@ const createKostService = async ({
   regulations,
   bans,
   description,
-  questions,
-  answers,
   outside_photos,
   inside_photos,
   bank,
@@ -34,8 +34,27 @@ const createKostService = async ({
       };
     }
 
+    const isKostTypeExist = await KostTypeRepositories.findKostTypesByNameRepo({
+      name: type,
+    });
+    if (!isKostTypeExist.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: `kost type unavailable`,
+        data: {
+          created_kost: null,
+        },
+      };
+    }
+
+    const kostFacilities =
+      await KostFacilityRepositories.findKostFacilitiesByMultipleNameRepo({
+        names: facilities,
+      });
+
     let outsidePhotosUrl = [];
-    for (let outsidePhoto in outside_photos) {
+    for (let outsidePhoto of outside_photos) {
       const outsidePhotoResponse = await CloudinaryUtils.uploadToCloudinary(
         outsidePhoto,
         "KostOutsidePhotos"
@@ -44,7 +63,7 @@ const createKostService = async ({
     }
 
     let insidePhotosUrl = [];
-    for (let insidePhoto in inside_photos) {
+    for (let insidePhoto of inside_photos) {
       const insidePhotoResponse = await CloudinaryUtils.uploadToCloudinary(
         insidePhoto,
         "KostInsidePhotos"
@@ -59,14 +78,12 @@ const createKostService = async ({
       province,
       district,
       subdistrict,
-      type,
-      facilities,
+      type: isKostTypeExist[0],
+      facilities: kostFacilities,
       regulations,
       bans,
       description,
-      questions,
-      answers,
-      outsides_photos_url: outsidePhotosUrl,
+      outside_photos_url: outsidePhotosUrl,
       inside_photos_url: insidePhotosUrl,
       bank,
       bank_number,
@@ -173,8 +190,6 @@ const updateKostByIdService = async ({
   regulations,
   bans,
   description,
-  questions,
-  answers,
   outside_photos,
   outside_photos_onhold_url,
   inside_photos,
@@ -196,6 +211,13 @@ const updateKostByIdService = async ({
       };
     }
 
+    if (!Array.isArray(outside_photos_onhold_url)) {
+      outside_photos_onhold_url = [outside_photos_onhold_url];
+    }
+    if (!Array.isArray(inside_photos_onhold_url)) {
+      inside_photos_onhold_url = [inside_photos_onhold_url];
+    }
+
     if (kostToUpdate.user._id != user) {
       return {
         status: "UNAUTHORIZED",
@@ -206,16 +228,53 @@ const updateKostByIdService = async ({
         },
       };
     }
+    let newKostType;
+    if (type) {
+      let newKostTypeTemp = await KostTypeRepositories.findKostTypesByNameRepo({
+        name: type,
+      });
+      if (!newKostType.length) {
+        return {
+          status: "BAD_REQUEST",
+          statusCode: 400,
+          message: "unavailable kost type",
+          data: {
+            updated_kost: null,
+          },
+        };
+      }
+      newKostType = newKostTypeTemp[0];
+    }
 
-    KostUtils.deleteRemovedPhotosUrl({
-      outsidePhotosUrl: kostToUpdate.outside_photos_url,
-      outsidePhotosOnholdUrl: outside_photos_onhold_url,
-    });
+    let newKostFacilities;
+    if (facilities?.length && facilities != undefined) {
+      newKostFacilities =
+        await KostFacilityRepositories.findKostFacilitiesByMultipleNameRepo({
+          names: facilities,
+        });
+      if (!newKostFacilities.length) {
+        return {
+          status: "BAD_REQUEST",
+          statusCode: 400,
+          message: "unavailable kost facilities",
+          data: {
+            updated_kost: null,
+          },
+        };
+      }
+    }
+    console.log(outside_photos_onhold_url);
+    if (outside_photos_onhold_url?.length) {
+      KostUtils.deleteRemovedPhotosUrl({
+        photosUrl: kostToUpdate.outside_photos_url,
+        photosOnholdUrl: outside_photos_onhold_url,
+      });
+    }
 
     let outsidePhotosToUpload = outside_photos_onhold_url;
 
     if (outside_photos) {
-      for (const outsidePhoto in outside_photos) {
+      for (const outsidePhoto of outside_photos) {
         const newOutsidePhotoResponse =
           await CloudinaryUtils.uploadToCloudinary(
             outsidePhoto,
@@ -224,22 +283,35 @@ const updateKostByIdService = async ({
         outsidePhotosToUpload.push(newOutsidePhotoResponse.secure_url);
       }
     }
-
-    KostUtils.deleteRemovedPhotosUrl({
-      outsidePhotosUrl: kostToUpdate.inside_photos_url,
-      outsidePhotosOnholdUrl: inside_photos_onhold_url,
-    });
+    if (inside_photos_onhold_url?.length) {
+      KostUtils.deleteRemovedPhotosUrl({
+        photosUrl: kostToUpdate.inside_photos_url,
+        photosOnholdUrl: inside_photos_onhold_url,
+      });
+    }
 
     let insidePhotosToUpload = inside_photos_onhold_url;
 
     if (inside_photos) {
-      for (const insidePhoto in inside_photos) {
+      for (const insidePhoto of inside_photos) {
         const newInsidePhotoResponse = await CloudinaryUtils.uploadToCloudinary(
           insidePhoto,
           "KostInsidePhotos"
         );
         insidePhotosToUpload.push(newInsidePhotoResponse.secure_url);
       }
+    }
+    console.log("OUTSIDE PHOTO TO UPLOAD", outsidePhotosToUpload);
+
+    if (outsidePhotosToUpload?.length > 4 || insidePhotosToUpload?.length > 4) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: "outside photos or inside photo max 4 and should be exist",
+        data: {
+          updated_kost: null,
+        },
+      };
     }
 
     const updatedKost = await KostRepositories.updateKostByIdRepo({
@@ -249,13 +321,11 @@ const updateKostByIdService = async ({
       province,
       district,
       subdistrict,
-      type,
-      facilities,
+      type: newKostType,
+      facilities: newKostFacilities,
       regulations,
       bans,
       description,
-      questions,
-      answers,
       outside_photos_url: outsidePhotosToUpload,
       inside_photos_url: insidePhotosToUpload,
       bank,
@@ -306,7 +376,8 @@ const deleteKostByIdService = async ({ id, user }) => {
       };
     }
     const deletedKost = await KostRepositories.deleteKostByIdRepo({ id });
-
+    CloudinaryUtils.deleteAllImages(kostToDelete.inside_photos_url);
+    CloudinaryUtils.deleteAllImages(kostToDelete.outside_photos_url);
     return {
       status: "SUCCESS",
       statusCode: 200,

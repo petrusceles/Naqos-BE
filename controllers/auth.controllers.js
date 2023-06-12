@@ -31,7 +31,6 @@ const logout = async (req, res) => {
       data: null,
     });
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       status: "INTERNAL_SERVER_ERROR",
       message: err,

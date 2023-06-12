@@ -6,10 +6,15 @@ const findKostFacilitiesByNameRepo = async ({ name }) => {
   return kostFacility;
 };
 
-const findKostFacilityByIdRepo = async ({id}) => {
-  const kostFacility = await KostFacility.findById(id)
-  return kostFacility
-}
+const findKostFacilitiesByMultipleNameRepo = async ({ names }) => {
+  const kostFacility = await KostFacility.where("name").in(names);
+  return kostFacility;
+};
+
+const findKostFacilityByIdRepo = async ({ id }) => {
+  const kostFacility = await KostFacility.findById(id);
+  return kostFacility;
+};
 
 const findAllKostFacilitiesRepo = async () => {
   const kostFacilities = await KostFacility.find();
@@ -43,5 +48,6 @@ module.exports = {
   createKostFacilityRepo,
   updateKostFacilityByIdRepo,
   deleteKostFacilityByIdRepo,
-  findKostFacilityByIdRepo
+  findKostFacilityByIdRepo,
+  findKostFacilitiesByMultipleNameRepo,
 };
