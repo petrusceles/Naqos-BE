@@ -263,7 +263,6 @@ const updateKostByIdService = async ({
         };
       }
     }
-    console.log(outside_photos_onhold_url);
     if (outside_photos_onhold_url?.length) {
       KostUtils.deleteRemovedPhotosUrl({
         photosUrl: kostToUpdate.outside_photos_url,
@@ -301,7 +300,6 @@ const updateKostByIdService = async ({
         insidePhotosToUpload.push(newInsidePhotoResponse.secure_url);
       }
     }
-    console.log("OUTSIDE PHOTO TO UPLOAD", outsidePhotosToUpload);
 
     if (outsidePhotosToUpload?.length > 4 || insidePhotosToUpload?.length > 4) {
       return {
