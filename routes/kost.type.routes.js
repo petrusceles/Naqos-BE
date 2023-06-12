@@ -12,7 +12,7 @@ routes.post(
   KostTypeControllers.createKostType
 );
 
-routes.get("/", KostTypeControllers.findAllKostFacilities);
+routes.get("/", KostTypeControllers.findAllKostTypes);
 routes.get("/:id", KostTypeControllers.findKostTypeById);
 routes.put(
   "/:id",

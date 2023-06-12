@@ -12,9 +12,9 @@ const createKostType = async (req, res) => {
   });
 };
 
-const findAllKostFacilities = async (req, res) => {
+const findAllKostTypes = async (req, res) => {
   const { status, statusCode, message, data } =
-    await KostTypeServices.findAllKostFacilitiesService();
+    await KostTypeServices.findAllKostTypesService();
   return res.status(statusCode).json({
     status,
     message,
@@ -63,7 +63,7 @@ const deleteKostTypeById = async (req, res) => {
 
 module.exports = {
   createKostType,
-  findAllKostFacilities,
+  findAllKostTypes,
   findKostTypeById,
   updateKostTypeById,
   deleteKostTypeById,

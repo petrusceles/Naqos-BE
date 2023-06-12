@@ -1,7 +1,7 @@
 const KostType = require("../models/kost.type.model.js");
 const mongoose = require("mongoose");
 
-const findKostFacilitiesByNameRepo = async ({ name }) => {
+const findKostTypesByNameRepo = async ({ name }) => {
   const kostType = await KostType.where("name").equals(name).limit(1);
   return kostType;
 };
@@ -11,9 +11,9 @@ const findKostTypeByIdRepo = async ({ id }) => {
   return kostType;
 };
 
-const findAllKostFacilitiesRepo = async () => {
-  const kostFacilities = await KostType.find();
-  return kostFacilities;
+const findAllKostTypesRepo = async () => {
+  const kostTypes = await KostType.find();
+  return kostTypes;
 };
 
 const createKostTypeRepo = async ({ name, icon_url }) => {
@@ -38,8 +38,8 @@ const deleteKostTypeByIdRepo = async ({ id }) => {
 };
 
 module.exports = {
-  findKostFacilitiesByNameRepo,
-  findAllKostFacilitiesRepo,
+  findKostTypesByNameRepo,
+  findAllKostTypesRepo,
   createKostTypeRepo,
   updateKostTypeByIdRepo,
   deleteKostTypeByIdRepo,
