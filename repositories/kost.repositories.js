@@ -16,6 +16,13 @@ const createKostRepo = async ({
   inside_photos_url,
   bank,
   bank_number,
+  room_facilities,
+  room_total,
+  room_remaining,
+  day_price,
+  month_price,
+  year_price,
+  room_photos_url,
 }) => {
   const kost = await Kost.create({
     name,
@@ -33,6 +40,13 @@ const createKostRepo = async ({
     inside_photos_url,
     bank,
     bank_number,
+    room_facilities,
+    room_total,
+    room_remaining,
+    day_price,
+    month_price,
+    year_price,
+    room_photos_url,
   });
 
   return kost;
@@ -98,6 +112,13 @@ const updateKostByIdRepo = async ({
   inside_photos_url,
   bank,
   bank_number,
+  room_facilities,
+  room_total,
+  room_remaining,
+  day_price,
+  month_price,
+  year_price,
+  room_photos_url,
 }) => {
   const updatedKost = await Kost.updateOne(
     {
@@ -120,6 +141,13 @@ const updateKostByIdRepo = async ({
         inside_photos_url,
         bank,
         bank_number,
+        room_facilities,
+        room_total,
+        room_remaining,
+        day_price,
+        month_price,
+        year_price,
+        room_photos_url,
       },
     }
   );

@@ -16,6 +16,11 @@ const findAllRoomFacilitiesRepo = async () => {
   return roomFacilities;
 };
 
+const findRoomFacilitiesByMultipleNameRepo = async ({ names }) => {
+  const roomFacility = await RoomFacility.where("name").in(names);
+  return roomFacility;
+};
+
 const createRoomFacilityRepo = async ({ name, icon_url }) => {
   const newRoomFacility = await RoomFacility.create({
     name,
@@ -44,4 +49,5 @@ module.exports = {
   updateRoomFacilityByIdRepo,
   deleteRoomFacilityByIdRepo,
   findRoomFacilityByIdRepo,
+  findRoomFacilitiesByMultipleNameRepo,
 };

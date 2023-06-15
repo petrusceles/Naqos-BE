@@ -64,6 +64,35 @@ const KostSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    room_facilities: {
+      type: [mongoose.SchemaTypes.ObjectId],
+      require: true,
+      ref: "RoomFacility",
+    },
+    room_total: {
+      type: mongoose.SchemaTypes.Number,
+      require: true,
+    },
+    room_remaining: {
+      type: mongoose.SchemaTypes.Number,
+      require: true,
+    },
+    day_price: {
+      type: mongoose.SchemaTypes.Number,
+      require: true,
+    },
+    month_price: {
+      type: mongoose.SchemaTypes.Number,
+      require: true,
+    },
+    year_price: {
+      type: mongoose.SchemaTypes.Number,
+      require: true,
+    },
+    room_photos_url: {
+      type: [String],
+      require: true,
+    },
   },
   { timestamps: true }
 );
@@ -79,12 +108,12 @@ KostSchema.index(
   },
   {
     weights: {
-      name:6,
-      address:5,
-      province:4,
-      district:3,
-      subdistrict:2,
-      description:1
+      name: 6,
+      address: 5,
+      province: 4,
+      district: 3,
+      subdistrict: 2,
+      description: 1,
     },
   }
 );

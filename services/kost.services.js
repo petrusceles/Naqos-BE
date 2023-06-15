@@ -1,6 +1,7 @@
 const KostRepositories = require("../repositories/kost.repositories.js");
 const KostTypeRepositories = require("../repositories/kost.type.repositories.js");
 const KostFacilityRepositories = require("../repositories/kost.facility.repositories.js");
+const RoomFacilityRepositories = require("../repositories/room.facility.repositories.js");
 const cloudinary = require("../config/cloudinary.js");
 const CloudinaryUtils = require("../utils/cloudinary.utils.js");
 const KostUtils = require("../utils/kost.utils.js");
@@ -20,6 +21,13 @@ const createKostService = async ({
   inside_photos,
   bank,
   bank_number,
+  room_facilities,
+  room_total,
+  room_remaining,
+  day_price,
+  month_price,
+  year_price,
+  room_photos,
 }) => {
   try {
     const isKostExist = await KostRepositories.findAllKostsByNameRepo({ name });
@@ -53,6 +61,17 @@ const createKostService = async ({
         names: facilities,
       });
 
+    if (kostFacilities?.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: `kost facilities should not be empty`,
+        data: {
+          created_kost: null,
+        },
+      };
+    }
+
     let outsidePhotosUrl = [];
     for (let outsidePhoto of outside_photos) {
       const outsidePhotoResponse = await CloudinaryUtils.uploadToCloudinary(
@@ -62,6 +81,17 @@ const createKostService = async ({
       outsidePhotosUrl.push(outsidePhotoResponse.secure_url);
     }
 
+    if (outsidePhotosUrl?.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: `inside photos should not be empty`,
+        data: {
+          created_kost: null,
+        },
+      };
+    }
+
     let insidePhotosUrl = [];
     for (let insidePhoto of inside_photos) {
       const insidePhotoResponse = await CloudinaryUtils.uploadToCloudinary(
@@ -69,6 +99,53 @@ const createKostService = async ({
         "KostInsidePhotos"
       );
       insidePhotosUrl.push(insidePhotoResponse.secure_url);
+    }
+
+    if (insidePhotosUrl?.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: `inside photos should not be empty`,
+        data: {
+          created_kost: null,
+        },
+      };
+    }
+
+    const roomFacilities =
+      await RoomFacilityRepositories.findRoomFacilitiesByMultipleNameRepo({
+        names: facilities,
+      });
+
+    if (roomFacilities?.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: `kost facilities should not be empty`,
+        data: {
+          created_kost: kost,
+        },
+      };
+    }
+
+    let roomPhotosUrl = [];
+    for (let roomPhoto of room_photos) {
+      const roomPhotoResponse = await CloudinaryUtils.uploadToCloudinary(
+        roomPhoto,
+        "RoomPhotos"
+      );
+      roomPhotosUrl.push(roomPhotoResponse.secure_url);
+    }
+
+    if (roomPhotosUrl?.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: `room photos should not be empty`,
+        data: {
+          created_kost: null,
+        },
+      };
     }
 
     const kost = await KostRepositories.createKostRepo({
@@ -87,6 +164,13 @@ const createKostService = async ({
       inside_photos_url: insidePhotosUrl,
       bank,
       bank_number,
+      room_facilities,
+      room_total,
+      room_remaining,
+      day_price,
+      month_price,
+      year_price,
+      room_photos_url: roomPhotosUrl,
     });
     return {
       status: "SUCCESS",
@@ -196,6 +280,14 @@ const updateKostByIdService = async ({
   inside_photos_onhold_url,
   bank,
   bank_number,
+  room_facilities,
+  room_total,
+  room_remaining,
+  day_price,
+  month_price,
+  year_price,
+  room_photos,
+  room_photos_onhold_url,
 }) => {
   try {
     const kostToUpdate = await KostRepositories.findKostByIdRepo({ id });
@@ -211,13 +303,6 @@ const updateKostByIdService = async ({
       };
     }
 
-    if (!Array.isArray(outside_photos_onhold_url)) {
-      outside_photos_onhold_url = [outside_photos_onhold_url];
-    }
-    if (!Array.isArray(inside_photos_onhold_url)) {
-      inside_photos_onhold_url = [inside_photos_onhold_url];
-    }
-
     if (kostToUpdate.user._id != user) {
       return {
         status: "UNAUTHORIZED",
@@ -228,6 +313,7 @@ const updateKostByIdService = async ({
         },
       };
     }
+
     let newKostType;
     if (type) {
       let newKostTypeTemp = await KostTypeRepositories.findKostTypesByNameRepo({
@@ -263,6 +349,93 @@ const updateKostByIdService = async ({
         };
       }
     }
+
+    let newRoomFacilities;
+    if (room_facilities?.length && room_facilities != undefined) {
+      newRoomFacilities =
+        await RoomFacilityRepositories.findRoomFacilitiesByMultipleNameRepo({
+          names: room_facilities,
+        });
+      if (!newRoomFacilities.length) {
+        return {
+          status: "BAD_REQUEST",
+          statusCode: 400,
+          message: "unavailable room facilities",
+          data: {
+            updated_kost: null,
+          },
+        };
+      }
+    }
+
+    if (!Array.isArray(outside_photos_onhold_url)) {
+      outside_photos_onhold_url = [outside_photos_onhold_url];
+    }
+    if (!Array.isArray(inside_photos_onhold_url)) {
+      inside_photos_onhold_url = [inside_photos_onhold_url];
+    }
+    if (!Array.isArray(room_photos_onhold_url)) {
+      room_photos_onhold_url = [room_photos_onhold_url];
+    }
+
+    let outsidePhotosCount = 0;
+
+    if (outside_photos_onhold_url?.length) {
+      outsidePhotosCount += outside_photos_onhold_url?.length;
+    }
+    if (outside_photos?.length) {
+      outsidePhotosCount += outside_photos?.length;
+    }
+
+    let insidePhotosCount = 0;
+
+    if (inside_photos_onhold_url?.length) {
+      insidePhotosCount += inside_photos_onhold_url?.length;
+    }
+    if (inside_photos?.length) {
+      insidePhotosCount += inside_photos?.length;
+    }
+
+    let roomPhotosCount = 0;
+
+    if (room_photos_onhold_url?.length) {
+      roomPhotosCount += room_photos_onhold_url?.length;
+    }
+    if (room_photos?.length) {
+      roomPhotosCount += room_photos?.length;
+    }
+
+    if (
+      outsidePhotosCount > 4 ||
+      insidePhotosCount > 4 ||
+      roomPhotosCount > 4
+    ) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: "outside photos, inside photos, and room photos max 4",
+        data: {
+          updated_kost: null,
+        },
+      };
+    }
+
+    if (
+      outsidePhotosCount == 0 ||
+      insidePhotosCount == 0 ||
+      roomPhotosCount == 0
+    ) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message:
+          "outside photos, inside photos, and room photos should not be empty",
+        data: {
+          updated_kost: null,
+        },
+      };
+    }
+
     if (outside_photos_onhold_url?.length) {
       KostUtils.deleteRemovedPhotosUrl({
         photosUrl: kostToUpdate.outside_photos_url,
@@ -272,7 +445,7 @@ const updateKostByIdService = async ({
 
     let outsidePhotosToUpload = outside_photos_onhold_url;
 
-    if (outside_photos) {
+    if (outside_photos?.length) {
       for (const outsidePhoto of outside_photos) {
         const newOutsidePhotoResponse =
           await CloudinaryUtils.uploadToCloudinary(
@@ -282,6 +455,7 @@ const updateKostByIdService = async ({
         outsidePhotosToUpload.push(newOutsidePhotoResponse.secure_url);
       }
     }
+
     if (inside_photos_onhold_url?.length) {
       KostUtils.deleteRemovedPhotosUrl({
         photosUrl: kostToUpdate.inside_photos_url,
@@ -301,15 +475,23 @@ const updateKostByIdService = async ({
       }
     }
 
-    if (outsidePhotosToUpload?.length > 4 || insidePhotosToUpload?.length > 4) {
-      return {
-        status: "BAD_REQUEST",
-        statusCode: 400,
-        message: "outside photos or inside photo max 4 and should be exist",
-        data: {
-          updated_kost: null,
-        },
-      };
+    if (room_photos_onhold_url?.length) {
+      KostUtils.deleteRemovedPhotosUrl({
+        photosUrl: kostToUpdate.room_photos_url,
+        photosOnholdUrl: room_photos_onhold_url,
+      });
+    }
+
+    let roomPhotosToUpload = room_photos_onhold_url;
+
+    if (room_photos) {
+      for (const roomPhoto of room_photos) {
+        const newRoomPhotoResponse = await CloudinaryUtils.uploadToCloudinary(
+          roomPhoto,
+          "KostRoomPhotos"
+        );
+        roomPhotosToUpload.push(newRoomPhotoResponse.secure_url);
+      }
     }
 
     const updatedKost = await KostRepositories.updateKostByIdRepo({
@@ -328,6 +510,13 @@ const updateKostByIdService = async ({
       inside_photos_url: insidePhotosToUpload,
       bank,
       bank_number,
+      room_facilities: newRoomFacilities,
+      room_total,
+      room_remaining,
+      day_price,
+      month_price,
+      year_price,
+      room_photos_url: roomPhotosToUpload
     });
     return {
       status: "SUCCESS",
@@ -376,6 +565,7 @@ const deleteKostByIdService = async ({ id, user }) => {
     const deletedKost = await KostRepositories.deleteKostByIdRepo({ id });
     CloudinaryUtils.deleteAllImages(kostToDelete.inside_photos_url);
     CloudinaryUtils.deleteAllImages(kostToDelete.outside_photos_url);
+    CloudinaryUtils.deleteAllImages(kostToDelete.room_photos_url);
     return {
       status: "SUCCESS",
       statusCode: 200,

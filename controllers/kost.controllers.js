@@ -14,9 +14,16 @@ const createKost = async (req, res) => {
     description,
     bank,
     bank_number,
+    room_facilities,
+    room_total,
+    room_remaining,
+    day_price,
+    month_price,
+    year_price,
   } = req.body;
   const outsidePhotos = req.files.outside_photos;
   const insidePhotos = req.files.inside_photos;
+  const roomPhotos = req.files.room_photos;
   const user = req.session.passport.user._id;
   const { status, statusCode, message, data } =
     await KostService.createKostService({
@@ -35,6 +42,13 @@ const createKost = async (req, res) => {
       bank_number,
       outside_photos: outsidePhotos,
       inside_photos: insidePhotos,
+      room_facilities,
+      room_total,
+      room_remaining,
+      day_price,
+      month_price,
+      year_price,
+      room_photos: roomPhotos,
     });
   //  return res.send(200, { message: "ok" });
   return res.status(statusCode).json({
@@ -82,12 +96,20 @@ const updateKostById = async (req, res) => {
     bank_number,
     outside_photos_onhold_url,
     inside_photos_onhold_url,
+    room_facilities,
+    room_total,
+    room_remaining,
+    day_price,
+    month_price,
+    year_price,
+    room_photos_onhold_url
   } = req.body;
   const outsidePhotos = req.files.outside_photos;
   const insidePhotos = req.files.inside_photos;
+  const roomPhotos =req.files.room_photos
   const user = req.session.passport.user._id;
   const id = req.params.id;
-  
+
   const { status, statusCode, message, data } =
     await KostService.updateKostByIdService({
       id,
@@ -108,6 +130,14 @@ const updateKostById = async (req, res) => {
       inside_photos: insidePhotos,
       outside_photos_onhold_url,
       inside_photos_onhold_url,
+      room_facilities,
+      room_total,
+      room_remaining,
+      day_price,
+      month_price,
+      year_price,
+      room_photos: roomPhotos,
+      room_photos_onhold_url
     });
   return res.status(statusCode).json({
     status,
