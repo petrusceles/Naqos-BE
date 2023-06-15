@@ -17,7 +17,7 @@ const fileEncoder = async (req, res, next) => {
     next();
   } catch (error) {
     res.status(500).json({
-      message: err,
+      message: err.message,
       data: {},
     });
   }

@@ -46,7 +46,7 @@ const createUserService = async ({
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         created_user: null,
       },
@@ -80,7 +80,7 @@ const findAllUsersService = async () => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         users: null,
       },
@@ -113,7 +113,7 @@ const findUserByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         user: null,
       },
@@ -258,7 +258,7 @@ const updateUserByIdService = async ({
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         updated_user: null,
       },
@@ -304,7 +304,7 @@ const deleteUserByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         deleted_user: null,
       },

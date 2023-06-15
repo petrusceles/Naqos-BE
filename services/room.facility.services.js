@@ -51,7 +51,7 @@ const createRoomFacilityService = async ({ name, icon }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         created_room_facility: null,
       },
@@ -85,7 +85,7 @@ const findAllRoomFacilitiesService = async () => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         room_facilites: null,
       },
@@ -116,7 +116,7 @@ const findRoomFacilityByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         room_facility: null,
       },
@@ -193,7 +193,7 @@ const updateRoomFacilityByIdService = async ({ id, name, icon }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         upodated_room_facility: null,
       },
@@ -233,7 +233,7 @@ const deleteRoomFacilityByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         deleted_room_facility: null,
       },

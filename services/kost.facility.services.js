@@ -51,7 +51,7 @@ const createKostFacilityService = async ({ name, icon }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         created_kost_type: null,
       },
@@ -85,7 +85,7 @@ const findAllKostFacilitiesService = async () => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         kost_facilites: null,
       },
@@ -116,7 +116,7 @@ const findKostFacilityByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         kost_type: null,
       },
@@ -193,7 +193,7 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         upodated_kost_type: null,
       },
@@ -233,7 +233,7 @@ const deleteKostFacilityByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         deleted_kost_type: null,
       },

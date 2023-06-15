@@ -28,7 +28,7 @@ const createRoleService = async ({ name }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         created_role: null,
       },
@@ -62,7 +62,7 @@ const findAllRolesService = async () => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         roles: null,
       },
@@ -95,7 +95,7 @@ const findRoleByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         role: null,
       },
@@ -154,7 +154,7 @@ const updateRoleByIdService = async ({ id, name }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         role: null,
       },
@@ -188,7 +188,7 @@ const deleteRoleByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         role: null,
       },

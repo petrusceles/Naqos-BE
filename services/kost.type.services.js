@@ -13,8 +13,9 @@ const createKostTypeService = async ({ name, icon }) => {
         },
       };
     }
-    const isKostTypeExist =
-      await KostTypeRepositories.findKostTypesByNameRepo({ name });
+    const isKostTypeExist = await KostTypeRepositories.findKostTypesByNameRepo({
+      name,
+    });
     if (isKostTypeExist.length) {
       return {
         status: "BAD_REQUEST",
@@ -48,7 +49,7 @@ const createKostTypeService = async ({ name, icon }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         created_kost_type: null,
       },
@@ -58,8 +59,7 @@ const createKostTypeService = async ({ name, icon }) => {
 
 const findAllKostTypesService = async () => {
   try {
-    const kostTypes =
-      await KostTypeRepositories.findAllKostTypesRepo();
+    const kostTypes = await KostTypeRepositories.findAllKostTypesRepo();
     if (!kostTypes.length) {
       return {
         status: "NOT_FOUND",
@@ -82,7 +82,7 @@ const findAllKostTypesService = async () => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         kost_facilites: null,
       },
@@ -112,7 +112,7 @@ const findKostTypeByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         kost_type: null,
       },
@@ -187,7 +187,7 @@ const updateKostTypeByIdService = async ({ id, name, icon }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         upodated_kost_type: null,
       },
@@ -229,7 +229,7 @@ const deleteKostTypeByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         deleted_kost_type: null,
       },

@@ -20,7 +20,7 @@ const logout = async (req, res) => {
       if (err) {
         return res.status(500).json({
           status: "INTERNAL_SERVER_ERROR",
-          message: err,
+          message: err.message,
           data: null,
         });
       }
@@ -33,7 +33,7 @@ const logout = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "INTERNAL_SERVER_ERROR",
-      message: err,
+      message: err.message,
       data: null,
     });
   }

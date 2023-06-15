@@ -2,17 +2,15 @@ const express = require("express");
 const routes = express.Router();
 const KostController = require("../controllers/kost.controllers.js");
 
-const upload = require("../middlewares/fileUpload");
+const upload = require("../middlewares/uploadKostPhotos.js");
 const fileEncoder = require("../middlewares/fileEncoder");
 const authMiddlerwares = require("../middlewares/auth.js");
+
 routes.post(
   "/",
   authMiddlerwares.checkAuthenticated,
   authMiddlerwares.isTenant,
-  upload.fields([
-    { name: "outside_photos", maxCount: 4 },
-    { name: "inside_photos", maxCount: 4 },
-  ]),
+  upload,
   fileEncoder.fileEncoder,
   KostController.createKost
 );
@@ -23,12 +21,7 @@ routes.put(
   "/:id",
   authMiddlerwares.checkAuthenticated,
   authMiddlerwares.isTenant,
-  upload.fields([
-    { name: "outside_photos", maxCount: 4 },
-    { name: "inside_photos", maxCount: 4 },
-    { name: "outside_photos_onhold_url", maxCount: 4 },
-    { name: "inside_photos_onhold_url", maxCount: 4 },
-  ]),
+  upload,
   fileEncoder.fileEncoder,
   KostController.updateKostById
 );

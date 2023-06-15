@@ -21,9 +21,11 @@ const createKost = async (req, res) => {
     month_price,
     year_price,
   } = req.body;
-  const outsidePhotos = req.files.outside_photos;
-  const insidePhotos = req.files.inside_photos;
-  const roomPhotos = req.files.room_photos;
+  
+  console.log(req.files);
+  let outsidePhotos = req.files.outside_photos;
+  let insidePhotos = req.files.inside_photos;
+  let roomPhotos = req.files.room_photos;
   const user = req.session.passport.user._id;
   const { status, statusCode, message, data } =
     await KostService.createKostService({
@@ -102,11 +104,12 @@ const updateKostById = async (req, res) => {
     day_price,
     month_price,
     year_price,
-    room_photos_onhold_url
+    room_photos_onhold_url,
   } = req.body;
-  const outsidePhotos = req.files.outside_photos;
-  const insidePhotos = req.files.inside_photos;
-  const roomPhotos =req.files.room_photos
+  console.log(req.files);
+  let outsidePhotos = req.files?.outside_photos;
+  let insidePhotos = req.files?.inside_photos;
+  let roomPhotos = req.files?.room_photos;
   const user = req.session.passport.user._id;
   const id = req.params.id;
 
@@ -137,7 +140,7 @@ const updateKostById = async (req, res) => {
       month_price,
       year_price,
       room_photos: roomPhotos,
-      room_photos_onhold_url
+      room_photos_onhold_url,
     });
   return res.status(statusCode).json({
     status,

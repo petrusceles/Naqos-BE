@@ -32,7 +32,7 @@ const createBookingPhaseService = async ({ name }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         created_booking_phase: null,
       },
@@ -67,7 +67,7 @@ const findAllBookingPhasesService = async () => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         booking_phases: null,
       },
@@ -101,7 +101,7 @@ const findBookingPhaseByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         booking_phase: null,
       },
@@ -163,7 +163,7 @@ const updateBookingPhaseByIdService = async ({ id, name }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         updated_booking_phase: null,
       },
@@ -199,7 +199,7 @@ const deleteBookingPhaseByIdService = async ({ id }) => {
     return {
       status: "INTERNAL_SERVER_ERROR",
       statusCode: 500,
-      message: err,
+      message: err.message,
       data: {
         deleted_booking_phase: null,
       },
