@@ -22,7 +22,6 @@ const createKost = async (req, res) => {
     year_price,
   } = req.body;
   
-  console.log(req.files);
   let outsidePhotos = req.files.outside_photos;
   let insidePhotos = req.files.inside_photos;
   let roomPhotos = req.files.room_photos;

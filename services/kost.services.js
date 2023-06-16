@@ -427,10 +427,6 @@ const updateKostByIdService = async ({
     if (room_photos?.length) {
       roomPhotosCount += room_photos?.length;
     }
-    console.log("outsidePhotos", outsidePhotosCount);
-    console.log("roomPhotos", roomPhotosCount);
-    console.log("insidePhotos", insidePhotosCount);
-
     if (
       outsidePhotosCount > 4 ||
       insidePhotosCount > 4 ||
