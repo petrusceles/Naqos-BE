@@ -87,7 +87,7 @@ const createKostService = async ({
         },
       };
     }
-    
+
     if (!Array.isArray(outside_photos) && outside_photos != undefined) {
       outside_photos = [outside_photos];
     }
@@ -171,7 +171,7 @@ const createKostService = async ({
       inside_photos_url: insidePhotosUrl,
       bank,
       bank_number,
-      room_facilities:roomFacilities,
+      room_facilities: roomFacilities,
       room_total,
       room_remaining,
       day_price,
@@ -326,7 +326,7 @@ const updateKostByIdService = async ({
       let newKostTypeTemp = await KostTypeRepositories.findKostTypesByNameRepo({
         name: type,
       });
-      if (!newKostType.length) {
+      if (!newKostTypeTemp?.length) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
@@ -376,23 +376,29 @@ const updateKostByIdService = async ({
     }
 
     if (!Array.isArray(outside_photos)) {
-      outside_photos = [outside_photos];
+      outside_photos = !outside_photos ? [] : [outside_photos];
     }
     if (!Array.isArray(inside_photos)) {
-      inside_photos = [inside_photos];
+      inside_photos = !inside_photos ? [] : [inside_photos];
     }
     if (!Array.isArray(room_photos)) {
-      room_photos = [room_photos];
+      room_photos = !room_photos ? [] : [room_photos];
     }
 
     if (!Array.isArray(outside_photos_onhold_url)) {
-      outside_photos_onhold_url = [outside_photos_onhold_url];
+      outside_photos_onhold_url = !outside_photos_onhold_url
+        ? []
+        : [outside_photos_onhold_url];
     }
     if (!Array.isArray(inside_photos_onhold_url)) {
-      inside_photos_onhold_url = [inside_photos_onhold_url];
+      inside_photos_onhold_url = !inside_photos_onhold_url
+        ? []
+        : [inside_photos_onhold_url];
     }
     if (!Array.isArray(room_photos_onhold_url)) {
-      room_photos_onhold_url = [room_photos_onhold_url];
+      room_photos_onhold_url = !room_photos_onhold_url
+        ? []
+        : [room_photos_onhold_url];
     }
 
     let outsidePhotosCount = 0;
@@ -421,6 +427,9 @@ const updateKostByIdService = async ({
     if (room_photos?.length) {
       roomPhotosCount += room_photos?.length;
     }
+    console.log("outsidePhotos", outsidePhotosCount);
+    console.log("roomPhotos", roomPhotosCount);
+    console.log("insidePhotos", insidePhotosCount);
 
     if (
       outsidePhotosCount > 4 ||
@@ -505,7 +514,7 @@ const updateKostByIdService = async ({
       for (const roomPhoto of room_photos) {
         const newRoomPhotoResponse = await CloudinaryUtils.uploadToCloudinary(
           roomPhoto,
-          "KostRoomPhotos"
+          "RoomPhotos"
         );
         roomPhotosToUpload.push(newRoomPhotoResponse.secure_url);
       }
