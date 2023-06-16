@@ -36,6 +36,11 @@ const findUsersByNameRepo = async ({ name }) => {
   return users;
 };
 
+const findUserByNameRepo = async ({ name }) => {
+  const users = await User.findOne({name});
+  return users;
+};
+
 const findUsersByEmailRepo = async ({ email }) => {
   const users = await User.where("email")
     .equals(email)
@@ -84,4 +89,5 @@ module.exports = {
   findUsersByNameRepo,
   findUsersByEmailRepo,
   findUsersByPhoneNumber,
+  findUserByNameRepo,
 };

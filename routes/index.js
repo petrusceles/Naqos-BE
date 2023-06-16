@@ -4,8 +4,9 @@ const RoomFacilityRoutes = require("./room.facility.routes.js");
 const RoleRoutes = require("./roles.routes.js");
 const BookingPhaseRoutes = require("./booking.phase.routes.js");
 const UserRoutes = require("./user.routes.js");
-const AuthRoutes = require("./auth.routes.js")
-const KostRoutes = require("./kost.routes.js")
+const AuthRoutes = require("./auth.routes.js");
+const KostRoutes = require("./kost.routes.js");
+const BookingRoutes = require("./booking.routes.js");
 const routes = require("express").Router();
 
 routes.use("/kost-facility", KostFacilityRoutes);
@@ -16,4 +17,5 @@ routes.use("/booking-phase", BookingPhaseRoutes);
 routes.use("/user", UserRoutes);
 routes.use("/auth", AuthRoutes);
 routes.use("/kost", KostRoutes);
+routes.use("/booking", BookingRoutes);
 module.exports = routes;

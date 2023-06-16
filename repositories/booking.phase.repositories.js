@@ -6,7 +6,7 @@ const findBookingPhaseByIdRepo = async ({ id }) => {
 };
 
 const findBookingPhasesByNameRepo = async ({ name }) => {
-  const roles = await BookingPhase.where("name").equals(name).limit(1);
+  const roles = await BookingPhase.findOne({name});
   return roles;
 };
 

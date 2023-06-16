@@ -63,6 +63,7 @@ const findAllKostFacilitiesService = async () => {
   try {
     const kostFacilities =
       await KostFacilityRepositories.findAllKostFacilitiesRepo();
+      
     if (!kostFacilities.length) {
       return {
         status: "NOT_FOUND",
@@ -102,6 +103,9 @@ const findKostFacilityByIdService = async ({ id }) => {
         status: "NOT_FOUND",
         statusCode: 404,
         message: `no kost type with id ${id}`,
+        data: {
+          kost_type: null,
+        },
       };
     }
     return {
@@ -173,7 +177,6 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
         "KostFacility"
       );
     }
-
     const updatedKostFacility =
       await KostFacilityRepositories.updateKostFacilityByIdRepo({
         id,

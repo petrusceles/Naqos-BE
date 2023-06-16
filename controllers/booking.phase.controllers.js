@@ -32,6 +32,7 @@ const findBookingPhaseById = async (req, res) => {
   });
 };
 
+
 const updateBookingPhaseById = async (req, res) => {
   const { name } = req.body;
   const id = req.params.id;

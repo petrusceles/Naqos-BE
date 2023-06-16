@@ -7,7 +7,7 @@ const createBookingPhaseService = async ({ name }) => {
         name,
       });
 
-    if (isBookingPhaseExist.length) {
+    if (isBookingPhaseExist) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
@@ -138,7 +138,7 @@ const updateBookingPhaseByIdService = async ({ id, name }) => {
       await BookingPhaseRepositories.findBookingPhasesByNameRepo({
         name,
       });
-    if (isBookingPhaseNameExist.length) {
+    if (isBookingPhaseNameExist) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,

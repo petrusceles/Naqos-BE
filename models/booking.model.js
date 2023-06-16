@@ -2,24 +2,23 @@ const mongoose = require("mongoose");
 
 const BookingSchema = new mongoose.Schema(
   {
-    user_id: {
+    buyer: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
     },
-    room_id: {
+    kost: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
-      ref: "Room",
+      ref: "Kost",
     },
-    status_id: {
+    phase: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
-      ref: "BookingStatus",
+      ref: "BookingPhase",
     },
-    prove_photo_url: {
+    proof_photo_url: {
       type: String,
-      required: true,
     },
     in_date: {
       type: mongoose.SchemaTypes.Date,

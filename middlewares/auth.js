@@ -41,10 +41,20 @@ const isTenant = (req, res, next) => {
   }
   next();
 };
-
+const isBuyer = (req, res, next) => {
+  if (req.session.passport.user.role.name != "buyer") {
+    return res.status(401).json({
+      status: "UNAUTHORIZED",
+      message: "unauthorized",
+      data: null,
+    });
+  }
+  next();
+};
 module.exports = {
   checkNotAuthenticated,
   checkAuthenticated,
   isAdmin,
   isTenant,
+  isBuyer,
 };
