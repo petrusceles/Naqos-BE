@@ -3,8 +3,9 @@ const UserRepositories = require("../repositories/user.repositories.js");
 const KostRepositories = require("../repositories/kost.repositories.js");
 const BookingPhaseRepositories = require("../repositories/booking.phase.repositories.js");
 const CloudinaryUtils = require("../utils/cloudinary.utils.js");
+const BookingPhase = require("../models/booking.phase.model.js");
+const phaseOrder = ["booking", "payment", "confirmation"];
 const createBookingService = async ({
-  user_id,
   buyer_id,
   kost_id,
   in_date,
@@ -42,17 +43,6 @@ const createBookingService = async ({
         status: "BAD_REQUEST",
         statusCode: 400,
         message: `kost with id ${kost_id} doesn't exist`,
-        data: {
-          created_booking: null,
-        },
-      };
-    }
-
-    if (user_id != buyer._id) {
-      return {
-        status: "UNAUTHORIZED",
-        statusCode: 401,
-        message: `user not allowed to create this data`,
         data: {
           created_booking: null,
         },
@@ -252,11 +242,44 @@ const updateBookingByIdService = async ({
         id: phase_id,
       });
 
+      if (
+        phase.name != phaseOrder[phaseOrder.indexOf(booking.phase.name) + 1] &&
+        phase.name != "failed"
+      ) {
+        return {
+          status: "BAD_REQUEST",
+          statusCode: 400,
+          message: `cannot modify phase data by ignoring the phase order`,
+          data: {
+            updated_booking: null,
+          },
+        };
+      }
+
+      if (phase.name == "failed") {
+        if (
+          !(
+            (booking.phase.name == "booking" && user_id == booking.buyer._id) ||
+            (booking.phase.name == "payment" &&
+              user_id == booking.kost.user._id)
+          )
+        ) {
+          return {
+            status: "BAD_REQUEST",
+            statusCode: 400,
+            message: `cannot modify phase to failed`,
+            data: {
+              updated_booking: null,
+            },
+          };
+        }
+      }
+
       if (phase.name == "payment" && user_id != booking.buyer._id) {
         return {
           status: "UNAUTHORIZED",
           statusCode: 401,
-          message: `user not allowed to mopdify this data`,
+          message: `user not allowed to modify this data`,
           data: {
             updated_booking: null,
           },
@@ -285,6 +308,7 @@ const updateBookingByIdService = async ({
         };
       }
     }
+
 
     let inDateFormated;
     if (in_date) {
@@ -348,15 +372,17 @@ const updateBookingByIdService = async ({
           },
         };
       }
-      const oldProofPhotoUrl = booking.proof_photo_url;
+      const oldProofPhotoUrl = booking?.proof_photo_url;
       const proofPhotoResponse = await CloudinaryUtils.uploadToCloudinary(
         proof_photo,
         "ProofPhoto"
       );
       proofPhotoUrl = proofPhotoResponse.secure_url;
-      const oldProofPhotoPublicId =
-        CloudinaryUtils.getPublicIdFromCloudinaryUrl(oldProofPhotoUrl);
-      CloudinaryUtils.deleteAllImages([oldProofPhotoPublicId]);
+      if (oldProofPhotoUrl) {
+        const oldProofPhotoPublicId =
+          CloudinaryUtils.getPublicIdFromCloudinaryUrl(oldProofPhotoUrl);
+        CloudinaryUtils.deleteAllImages([oldProofPhotoPublicId]);
+      }
     }
 
     const updatedBooking = await BookingRepositories.updateBookingByIdRepo({
@@ -371,7 +397,7 @@ const updateBookingByIdService = async ({
       statusCode: 200,
       message: `booking updated`,
       data: {
-        updated_booking: updatedBooking,
+        updated_booking: null,
       },
     };
   } catch (err) {
@@ -386,7 +412,7 @@ const updateBookingByIdService = async ({
   }
 };
 
-const deleteBookingById = async ({ id }) => {
+const deleteBookingById = async ({ id,user_id }) => {
   try {
     const booking = await BookingRepositories.findBookingByIdRepo({ id });
 
