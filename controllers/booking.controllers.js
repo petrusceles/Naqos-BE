@@ -40,14 +40,14 @@ const findBookingById = async (req, res) => {
 
 const updateBookingById = async (req, res) => {
   const id = req.params.id;
-  const { phase_id, in_date, out_date } = req.body;
+  const { phase, in_date, out_date } = req.body;
   const user_id = req.session.passport.user._id;
   const proof_photo = req.fileEncoded;
   const { status, statusCode, message, data } =
     await BookingServices.updateBookingByIdService({
       id,
       user_id,
-      phase_id,
+      phase,
       proof_photo,
       in_date,
       out_date,

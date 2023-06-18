@@ -13,9 +13,12 @@ const BookingSchema = new mongoose.Schema(
       ref: "Kost",
     },
     phase: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: String,
       required: true,
-      ref: "BookingPhase",
+      enum: {
+        values: ["booking", "payment", "confirmation", "failed"],
+        message: "{VALUE} is not supported",
+      },
     },
     proof_photo_url: {
       type: String,

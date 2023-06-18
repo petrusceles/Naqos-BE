@@ -1,12 +1,14 @@
 const BookingPhase = require("../models/booking.phase.model.js");
-
+const opts = {
+  runValidators: true,
+};
 const findBookingPhaseByIdRepo = async ({ id }) => {
   const role = await BookingPhase.findById(id);
   return role;
 };
 
 const findBookingPhasesByNameRepo = async ({ name }) => {
-  const roles = await BookingPhase.findOne({name});
+  const roles = await BookingPhase.findOne({ name });
   return roles;
 };
 
@@ -25,7 +27,8 @@ const updateBookingPhaseByIdRepo = async ({ id, name }) => {
     {
       _id: id,
     },
-    { $set: { name } }
+    { $set: { name } },
+    opts
   );
   return updatedBookingPhase;
 };

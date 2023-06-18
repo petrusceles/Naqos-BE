@@ -1,5 +1,7 @@
 const Booking = require("../models/booking.model.js");
-
+const opts = {
+  runValidators : true
+}
 const createBookingRepo = async ({
   buyer,
   kost,
@@ -32,7 +34,6 @@ const findAllBookingsRepo = async () => {
       path: "buyer",
       select: "-password",
     })
-    .populate("phase");
   return bookings;
 };
 
@@ -49,7 +50,6 @@ const findBookingByIdRepo = async ({ id }) => {
       path: "buyer",
       select: "-password",
     })
-    .populate("phase");
   return booking;
 };
 
@@ -75,7 +75,8 @@ const updateBookingByIdRepo = async ({
         in_date,
         out_date,
       },
-    }
+    },
+    opts
   );
 
   return updatedBooking;

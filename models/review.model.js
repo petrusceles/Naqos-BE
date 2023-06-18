@@ -1,19 +1,22 @@
 const mongoose = require("mongoose");
 const ReviewSchema = new mongoose.Schema(
   {
-    user_id: {
+    booking: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
-      ref: "User",
-    },
-    room_id: {
-      type: mongoose.SchemaTypes.ObjectId,
-      required: true,
-      ref: "Room",
+      ref: "Booking",
     },
     star: {
-      type: Float32Array,
+      type: Number,
       required: true,
+      min: 1,
+      max: 5,
+      validate: {
+        validator: (value) => {
+          return /^\d+(\.\d{1})?$/.test(value);
+        },
+        message: "star value must be a number with up to one decimal place",
+      },
     },
     review: {
       type: String,

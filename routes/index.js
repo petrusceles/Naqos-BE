@@ -6,6 +6,7 @@ const BookingPhaseRoutes = require("./booking.phase.routes.js");
 const UserRoutes = require("./user.routes.js");
 const AuthRoutes = require("./auth.routes.js");
 const KostRoutes = require("./kost.routes.js");
+const ReviewRoutes = require("./review.routes.js");
 const BookingRoutes = require("./booking.routes.js");
 const routes = require("express").Router();
 
@@ -18,4 +19,5 @@ routes.use("/user", UserRoutes);
 routes.use("/auth", AuthRoutes);
 routes.use("/kost", KostRoutes);
 routes.use("/booking", BookingRoutes);
+routes.use("/review", ReviewRoutes);
 module.exports = routes;
