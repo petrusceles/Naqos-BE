@@ -1,10 +1,10 @@
-const KostFacilityServices = require("../services/kost.facility.services");
+const KostTypeServices = require("../services/kost.type.services");
 
-const createKostFacility = async (req, res) => {
+const createKostType = async (req, res) => {
   const { name } = req.body;
   const icon = req.fileEncoded;
   const { status, statusCode, message, data } =
-    await KostFacilityServices.createKostFacilityService({ name, icon });
+    await KostTypeServices.createKostTypeService({ name, icon });
   return res.status(statusCode).json({
     status,
     message,
@@ -12,9 +12,9 @@ const createKostFacility = async (req, res) => {
   });
 };
 
-const findAllKostFacilities = async (req, res) => {
+const findAllKostTypes = async (req, res) => {
   const { status, statusCode, message, data } =
-    await KostFacilityServices.findAllKostFacilitiesService();
+    await KostTypeServices.findAllKostTypesService();
   return res.status(statusCode).json({
     status,
     message,
@@ -22,10 +22,10 @@ const findAllKostFacilities = async (req, res) => {
   });
 };
 
-const findKostFacilityById = async (req, res) => {
+const findKostTypeById = async (req, res) => {
   const id = req.params.id;
   const { status, statusCode, message, data } =
-    await KostFacilityServices.findKostFacilityByIdService({ id });
+    await KostTypeServices.findKostTypeByIdService({ id });
   return res.status(statusCode).json({
     status,
     message,
@@ -33,12 +33,12 @@ const findKostFacilityById = async (req, res) => {
   });
 };
 
-const updateKostFacilityById = async (req, res) => {
+const updateKostTypeById = async (req, res) => {
   const { name } = req.body;
   const id = req.params.id;
   const icon = req.fileEncoded;
   const { status, statusCode, message, data } =
-    await KostFacilityServices.updateKostFacilityByIdService({
+    await KostTypeServices.updateKostTypeByIdService({
       id,
       name,
       icon,
@@ -50,10 +50,10 @@ const updateKostFacilityById = async (req, res) => {
   });
 };
 
-const deleteKostFacilityById = async (req, res) => {
+const deleteKostTypeById = async (req, res) => {
   const id = req.params.id;
   const { status, statusCode, message, data } =
-    await KostFacilityServices.deleteKostFacilityByIdService({ id });
+    await KostTypeServices.deleteKostTypeByIdService({ id });
   return res.status(statusCode).json({
     status,
     message,
@@ -62,9 +62,9 @@ const deleteKostFacilityById = async (req, res) => {
 };
 
 module.exports = {
-  createKostFacility,
-  findAllKostFacilities,
-  findKostFacilityById,
-  updateKostFacilityById,
-  deleteKostFacilityById,
+  createKostType,
+  findAllKostTypes,
+  findKostTypeById,
+  updateKostTypeById,
+  deleteKostTypeById,
 };

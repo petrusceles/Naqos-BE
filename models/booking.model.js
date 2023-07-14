@@ -1,33 +1,42 @@
 const mongoose = require("mongoose");
 
-const Booking = mongoose.model("Booking", {
-  user_id: {
-    type: mongoose.SchemaTypes.ObjectId,
-    required: true,
-    ref:"User"
+const BookingSchema = new mongoose.Schema(
+  {
+    buyer: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    kost: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "Kost",
+    },
+    phase: {
+      type: String,
+      required: true,
+      enum: {
+        values: ["booking", "payment", "confirmation", "failed"],
+        message: "{VALUE} is not supported",
+      },
+    },
+    proof_photo_url: {
+      type: String,
+    },
+    in_date: {
+      type: mongoose.SchemaTypes.Date,
+      required: true,
+    },
+    out_date: {
+      type: mongoose.SchemaTypes.Date,
+      required: true,
+    },
   },
-  room_id: {
-    type: mongoose.SchemaTypes.ObjectId,
-    required: true,
-    ref:"Room"
-  },
-  status_id: {
-    type: mongoose.SchemaTypes.ObjectId,
-    required: true,
-    ref:"BookingStatus"
-  },
-  proof_photo_url: {
-    type: String,
-    required: true,
-  },
-  in_date: {
-    type: mongoose.SchemaTypes.Date,
-    required: true,
-  },
-  out_date: {
-    type: mongoose.SchemaTypes.Date,
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
+
+const Booking = mongoose.model("Booking", BookingSchema);
 
 module.exports = Booking;

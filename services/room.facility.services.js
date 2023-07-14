@@ -1,8 +1,8 @@
-// const cloudinary = require("../config/cloudinary");
-const KostFacilityRepositories = require("../repositories/kost.facility.repositories");
+const RoomFacilityRepositories = require("../repositories/room.facility.repositories");
 const CloudinaryUtils = require("../utils/cloudinary.utils.js");
 const cloudinary = require("../config/cloudinary.js");
-const createKostFacilityService = async ({ name, icon }) => {
+
+const createRoomFacilityService = async ({ name, icon }) => {
   try {
     if (!name || !icon) {
       return {
@@ -10,31 +10,31 @@ const createKostFacilityService = async ({ name, icon }) => {
         statusCode: 400,
         message: "name or icon field must not be empty",
         data: {
-          created_kost_type: null,
+          created_room_facility: null,
         },
       };
     }
 
-    const isKostFacilityExist =
-      await KostFacilityRepositories.findKostFacilitiesByNameRepo({ name });
-    if (isKostFacilityExist.length) {
+    const isRoomFacilityExist =
+      await RoomFacilityRepositories.findRoomFacilitiesByNameRepo({ name });
+    if (isRoomFacilityExist.length) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: "kost type has already exist",
+        message: "room facility has already exist",
         data: {
-          created_kost_type: null,
+          created_room_facility: null,
         },
       };
     }
 
     const iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
       icon,
-      "KostFacility"
+      "RoomFacility"
     );
 
-    const newKostFacility =
-      await KostFacilityRepositories.createKostFacilityRepo({
+    const newRoomFacility =
+      await RoomFacilityRepositories.createRoomFacilityRepo({
         name,
         icon_url: iconUploadResponse.secure_url,
       });
@@ -42,9 +42,9 @@ const createKostFacilityService = async ({ name, icon }) => {
     return {
       status: "CREATED",
       statusCode: 201,
-      message: "new kost type added",
+      message: "new room facility added",
       data: {
-        created_kost_type: newKostFacility,
+        created_room_facility: newRoomFacility,
       },
     };
   } catch (err) {
@@ -53,33 +53,32 @@ const createKostFacilityService = async ({ name, icon }) => {
       statusCode: 500,
       message: err.message,
       data: {
-        created_kost_type: null,
+        created_room_facility: null,
       },
     };
   }
 };
 
-const findAllKostFacilitiesService = async () => {
+const findAllRoomFacilitiesService = async () => {
   try {
-    const kostFacilities =
-      await KostFacilityRepositories.findAllKostFacilitiesRepo();
-      
-    if (!kostFacilities.length) {
+    const roomFacilities =
+      await RoomFacilityRepositories.findAllRoomFacilitiesRepo();
+    if (!roomFacilities.length) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: "kost facility is empty",
+        message: "room facility is empty",
         data: {
-          kost_facilites: null,
+          room_facilites: null,
         },
       };
     }
     return {
       status: "FOUND",
       statusCode: 200,
-      message: "all kost facilities retrieved",
+      message: "all room facilities retrieved",
       data: {
-        kost_facilites: kostFacilities,
+        room_facilites: roomFacilities,
       },
     };
   } catch (err) {
@@ -88,32 +87,29 @@ const findAllKostFacilitiesService = async () => {
       statusCode: 500,
       message: err.message,
       data: {
-        kost_facilites: null,
+        room_facilites: null,
       },
     };
   }
 };
 
-const findKostFacilityByIdService = async ({ id }) => {
+const findRoomFacilityByIdService = async ({ id }) => {
   try {
-    const kostFacility =
-      await KostFacilityRepositories.findKostFacilityByIdRepo({ id });
-    if (!kostFacility) {
+    const roomFacility =
+      await RoomFacilityRepositories.findRoomFacilityByIdRepo({ id });
+    if (!roomFacility) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
-        data: {
-          kost_type: null,
-        },
+        message: `no room facility with id ${id}`,
       };
     }
     return {
       status: "FOUND",
       statusCode: 200,
-      message: "kost type retrieved",
+      message: "room facility retrieved",
       data: {
-        kost_type: kostFacility,
+        room_facility: roomFacility,
       },
     };
   } catch (err) {
@@ -122,13 +118,13 @@ const findKostFacilityByIdService = async ({ id }) => {
       statusCode: 500,
       message: err.message,
       data: {
-        kost_type: null,
+        room_facility: null,
       },
     };
   }
 };
 
-const updateKostFacilityByIdService = async ({ id, name, icon }) => {
+const updateRoomFacilityByIdService = async ({ id, name, icon }) => {
   try {
     if (!name && !icon) {
       return {
@@ -136,32 +132,32 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
         statusCode: 400,
         message: `name or icon is needed`,
         data: {
-          upodated_kost_type: null,
+          upodated_room_facility: null,
         },
       };
     }
-    const kostFacility =
-      await KostFacilityRepositories.findKostFacilityByIdRepo({ id });
-    if (!kostFacility) {
+    const roomFacility =
+      await RoomFacilityRepositories.findRoomFacilityByIdRepo({ id });
+    if (!roomFacility) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no room facility with id ${id}`,
         data: {
-          upodated_kost_type: null,
+          upodated_room_facility: null,
         },
       };
     }
 
-    const isKostFacilityNewNameExist =
-      await KostFacilityRepositories.findKostFacilitiesByNameRepo({ name });
-    if (isKostFacilityNewNameExist.length) {
+    const isRoomFacilityNewNameExist =
+      await RoomFacilityRepositories.findRoomFacilitiesByNameRepo({ name });
+    if (isRoomFacilityNewNameExist.length) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: `kost type named ${name} is already exist`,
+        message: `room facility named ${name} is already exist`,
         data: {
-          upodated_kost_type: null,
+          upodated_room_facility: null,
         },
       };
     }
@@ -169,16 +165,17 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
 
     if (icon) {
       const oldIconPublidId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
-        kostFacility.icon_url
+        roomFacility.icon_url
       );
       cloudinary.uploader.destroy(oldIconPublidId);
       iconUploadResponse = await CloudinaryUtils.uploadToCloudinary(
         icon,
-        "KostFacility"
+        "RoomFacility"
       );
     }
-    const updatedKostFacility =
-      await KostFacilityRepositories.updateKostFacilityByIdRepo({
+
+    const updatedRoomFacility =
+      await RoomFacilityRepositories.updateRoomFacilityByIdRepo({
         id,
         name,
         icon_url: iconUploadResponse?.secure_url,
@@ -187,9 +184,9 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
     return {
       status: "SUCCESS",
       statusCode: 200,
-      message: "kost type update",
+      message: "room facility update",
       data: {
-        kost_type: updatedKostFacility,
+        room_facility: updatedRoomFacility,
       },
     };
   } catch (err) {
@@ -198,38 +195,38 @@ const updateKostFacilityByIdService = async ({ id, name, icon }) => {
       statusCode: 500,
       message: err.message,
       data: {
-        upodated_kost_type: null,
+        upodated_room_facility: null,
       },
     };
   }
 };
 
-const deleteKostFacilityByIdService = async ({ id }) => {
+const deleteRoomFacilityByIdService = async ({ id }) => {
   try {
-    const toBeDeletedKostFacility =
-      await KostFacilityRepositories.findKostFacilityByIdRepo({ id });
-    if (!toBeDeletedKostFacility) {
+    const toBeDeletedRoomFacility =
+      await RoomFacilityRepositories.findRoomFacilityByIdRepo({ id });
+    if (!toBeDeletedRoomFacility) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
-        message: `no kost type with id ${id}`,
+        message: `no room facility with id ${id}`,
         data: {
-          deleted_kost_type: null,
+          deleted_room_facility: null,
         },
       };
     }
     const iconPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
-      toBeDeletedKostFacility.icon_url
+      toBeDeletedRoomFacility.icon_url
     );
     cloudinary.uploader.destroy(iconPublicId);
-    const deletedKostFacility =
-      await KostFacilityRepositories.deleteKostFacilityByIdRepo({ id });
+    const deletedRoomFacility =
+      await RoomFacilityRepositories.deleteRoomFacilityByIdRepo({ id });
     return {
       status: "SUCCESS",
       statusCode: 200,
-      message: "kost type deleted",
+      message: "room facility deleted",
       data: {
-        deleted_kost_type: deletedKostFacility,
+        deleted_room_facility: deletedRoomFacility,
       },
     };
   } catch (err) {
@@ -238,16 +235,16 @@ const deleteKostFacilityByIdService = async ({ id }) => {
       statusCode: 500,
       message: err.message,
       data: {
-        deleted_kost_type: null,
+        deleted_room_facility: null,
       },
     };
   }
 };
 
 module.exports = {
-  createKostFacilityService,
-  findAllKostFacilitiesService,
-  findKostFacilityByIdService,
-  updateKostFacilityByIdService,
-  deleteKostFacilityByIdService,
+  createRoomFacilityService,
+  findAllRoomFacilitiesService,
+  findRoomFacilityByIdService,
+  updateRoomFacilityByIdService,
+  deleteRoomFacilityByIdService,
 };

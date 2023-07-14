@@ -2,3 +2,7 @@ node_modules/*
 *.lock
 .env
 *.log
+.yarn
+.vscode
+.editorconfig
+.yarnrc.yml
