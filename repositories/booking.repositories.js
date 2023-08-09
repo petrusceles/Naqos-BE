@@ -1,28 +1,33 @@
 const Booking = require("../models/booking.model.js");
 const opts = {
-  runValidators : true
-}
+  runValidators: true,
+};
 const createBookingRepo = async ({
-  buyer,
+  user,
   kost,
   phase,
   proof_photo_url,
   in_date,
   out_date,
+  time,
+  price,
 }) => {
   const booking = await Booking.create({
-    buyer,
+    user,
     kost,
     phase,
     proof_photo_url,
     in_date,
     out_date,
+    time,
+    price,
   });
   return booking;
 };
 
-const findAllBookingsRepo = async () => {
-  const bookings = await Booking.find()
+const findAllBookingsRepo = async ({ query }) => {
+  console.log(query)
+  const bookings = await Booking.find(query)
     .populate({
       path: "kost",
       populate: {
@@ -31,11 +36,13 @@ const findAllBookingsRepo = async () => {
       },
     })
     .populate({
-      path: "buyer",
+      path: "user",
       select: "-password",
-    })
+    });
   return bookings;
 };
+
+// const findBooking
 
 const findBookingByIdRepo = async ({ id }) => {
   const booking = await Booking.findById(id)
@@ -47,20 +54,22 @@ const findBookingByIdRepo = async ({ id }) => {
       },
     })
     .populate({
-      path: "buyer",
+      path: "user",
       select: "-password",
-    })
+    });
   return booking;
 };
 
 const updateBookingByIdRepo = async ({
   id,
-  buyer,
+  user,
   kost,
   phase,
   proof_photo_url,
   in_date,
   out_date,
+  time,
+  price,
 }) => {
   const updatedBooking = await Booking.updateOne(
     {
@@ -68,12 +77,14 @@ const updateBookingByIdRepo = async ({
     },
     {
       $set: {
-        buyer,
+        user,
         kost,
         phase,
         proof_photo_url,
         in_date,
         out_date,
+        time,
+        price,
       },
     },
     opts

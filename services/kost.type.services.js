@@ -66,7 +66,7 @@ const findAllKostTypesService = async () => {
         statusCode: 404,
         message: "kost type is empty",
         data: {
-          kost_facilites: null,
+          kost_types: null,
         },
       };
     }
@@ -75,7 +75,7 @@ const findAllKostTypesService = async () => {
       statusCode: 200,
       message: "all kost types retrieved",
       data: {
-        kost_facilites: kostTypes,
+        kost_types: kostTypes,
       },
     };
   } catch (err) {
@@ -84,7 +84,7 @@ const findAllKostTypesService = async () => {
       statusCode: 500,
       message: err.message,
       data: {
-        kost_facilites: null,
+        kost_types: null,
       },
     };
   }

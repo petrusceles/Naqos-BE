@@ -1,14 +1,16 @@
 const BookingServices = require("../services/booking.services.js");
 
 const createBooking = async (req, res) => {
-  const { kost_id, in_date, out_date } = req.body;
+  const { kost_id, in_date, out_date, time, price } = req.body;
   const user_id = req.session.passport.user._id;
   const { status, statusCode, message, data } =
     await BookingServices.createBookingService({
-      buyer_id:user_id,
+      user_id,
       kost_id,
       in_date,
       out_date,
+      time,
+      price,
     });
   return res.status(statusCode).json({
     status,
@@ -18,8 +20,9 @@ const createBooking = async (req, res) => {
 };
 
 const findAllBookings = async (req, res) => {
+  let query = req.query;
   const { status, statusCode, message, data } =
-    await BookingServices.findAllBookingsService();
+    await BookingServices.findAllBookingsService({ query });
   return res.status(statusCode).json({
     status,
     message,
@@ -40,7 +43,7 @@ const findBookingById = async (req, res) => {
 
 const updateBookingById = async (req, res) => {
   const id = req.params.id;
-  const { phase, in_date, out_date } = req.body;
+  const { phase, in_date, out_date, price, time } = req.body;
   const user_id = req.session.passport.user._id;
   const proof_photo = req.fileEncoded;
   const { status, statusCode, message, data } =
@@ -51,6 +54,8 @@ const updateBookingById = async (req, res) => {
       proof_photo,
       in_date,
       out_date,
+      price,
+      time,
     });
   return res.status(statusCode).json({
     status,

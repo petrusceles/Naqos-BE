@@ -1,8 +1,12 @@
 const express = require("express");
 const routes = express.Router();
 const BookingPhaseControllers = require("../controllers/booking.phase.controllers.js");
-const authMiddlerwares = require("../middlewares/auth.js")
-routes.post("/", BookingPhaseControllers.createBookingPhase);
+const authMiddlewares = require("../middlewares/auth.js");
+routes.post(
+  "/",
+  authMiddlewares.isAdmin,
+  BookingPhaseControllers.createBookingPhase
+);
 routes.get("/", BookingPhaseControllers.findAllBookingPhases);
 routes.get("/:id", BookingPhaseControllers.findBookingPhaseById);
 routes.put("/:id", BookingPhaseControllers.updateBookingPhaseById);

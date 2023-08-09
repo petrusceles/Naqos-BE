@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const BookingSchema = new mongoose.Schema(
   {
-    buyer: {
+    user: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
@@ -11,6 +11,18 @@ const BookingSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "Kost",
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    time: {
+      type: String,
+      required: true,
+      enum: {
+        values: ["day", "month", "year"],
+        message: "{VALUE} is not supported",
+      },
     },
     phase: {
       type: String,

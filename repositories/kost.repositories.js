@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const Kost = require("../models/kost.model.js");
 
 const createKostRepo = async ({
@@ -52,6 +53,11 @@ const createKostRepo = async ({
   return kost;
 };
 
+const findAllCitiesRepo = async () => {
+  const cities = await Kost.distinct("district");
+  return cities;
+};
+
 const findAllKostsRepo = async () => {
   const kost = await Kost.find()
     .populate({ path: "user", select: "-password" })
@@ -69,28 +75,44 @@ const findAllKostsByNameRepo = async ({ name }) => {
   return kosts;
 };
 
-const searchAllKostsByKeywordRepo = async ({ keyword }) => {
-  let query = {};
+const searchAllKostsByKeywordRepo = async ({
+  keyword,
+  limit,
+  sorted_by,
+  search_by,
+}) => {
+  let keywordQuery = {};
   if (keyword) {
-    query.$text = { $search: keyword };
+    keywordQuery.$text = { $search: `\"${keyword}\"` };
   }
+
+  let query = {};
+  if (search_by) {
+    query = Object.assign(keywordQuery, search_by);
+  }
+  console.log(query);
   const kosts = await Kost.find(query)
     .populate({
       path: "user",
       select: "-password",
     })
     .populate("facilities")
-    .populate("type");
+    .populate("room_facilities")
+    .populate("type")
+    .sort([[sorted_by, "asc"]])
+    .limit(limit);
   return kosts;
 };
 
 const findKostByIdRepo = async ({ id }) => {
+  // console.log(id);
   const kost = await Kost.findById(id)
     .populate({
       path: "user",
       select: "-password",
     })
     .populate("facilities")
+    .populate("room_facilities")
     .populate("type");
   return kost;
 };
@@ -167,4 +189,5 @@ module.exports = {
   deleteKostByIdRepo,
   searchAllKostsByKeywordRepo,
   findAllKostsByNameRepo,
+  findAllCitiesRepo,
 };

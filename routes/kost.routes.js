@@ -15,6 +15,8 @@ routes.post(
   KostController.createKost
 );
 
+
+routes.get("/cities", KostController.findAllCities);
 routes.get("/", KostController.searchAllKostsByKeyword);
 routes.get("/:id", KostController.findKostById);
 routes.put(

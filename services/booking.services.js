@@ -5,13 +5,15 @@ const CloudinaryUtils = require("../utils/cloudinary.utils.js");
 const phaseOrder = ["booking", "payment", "confirmation"];
 
 const createBookingService = async ({
-  buyer_id,
+  user_id,
   kost_id,
   in_date,
   out_date,
+  time,
+  price,
 }) => {
   try {
-    if (!buyer_id || !kost_id || !in_date || !out_date) {
+    if (!user_id || !kost_id || !in_date || !out_date || !time || !price) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
@@ -22,13 +24,13 @@ const createBookingService = async ({
       };
     }
 
-    const buyer = await UserRepositories.findUserByIdRepo({ id: buyer_id });
+    const user = await UserRepositories.findUserByIdRepo({ id: user_id });
 
-    if (!buyer) {
+    if (!user) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: `user buyer with id ${buyer_id} doesn't exist`,
+        message: `user with id ${user_id} doesn't exist`,
         data: {
           created_booking: null,
         },
@@ -75,11 +77,13 @@ const createBookingService = async ({
     }
 
     const createdBooking = await BookingRepositories.createBookingRepo({
-      buyer,
+      user,
       kost,
-      phase:"booking",
+      phase: "booking",
       in_date: inDateFormated,
       out_date: outDateFormated,
+      price,
+      time,
     });
 
     return {
@@ -102,9 +106,9 @@ const createBookingService = async ({
   }
 };
 
-const findAllBookingsService = async () => {
+const findAllBookingsService = async ({ query }) => {
   try {
-    const bookings = await BookingRepositories.findAllBookingsRepo();
+    const bookings = await BookingRepositories.findAllBookingsRepo({ query });
     if (!bookings?.length) {
       return {
         status: "NOT_FOUND",
@@ -176,6 +180,8 @@ const updateBookingByIdService = async ({
   proof_photo,
   in_date,
   out_date,
+  price,
+  time,
 }) => {
   try {
     let booking = await BookingRepositories.findBookingByIdRepo({ id });
@@ -221,7 +227,7 @@ const updateBookingByIdService = async ({
     // }
 
     if (phase) {
-      if (user_id != booking.buyer._id && user_id != booking.kost.user._id) {
+      if (user_id != booking.user._id && user_id != booking.kost.user._id) {
         return {
           status: "UNAUTHORIZED",
           statusCode: 401,
@@ -249,9 +255,8 @@ const updateBookingByIdService = async ({
       if (phase == "failed") {
         if (
           !(
-            (booking.phase == "booking" && user_id == booking.buyer._id) ||
-            (booking.phase == "payment" &&
-              user_id == booking.kost.user._id)
+            (booking.phase == "booking" && user_id == booking.user._id) ||
+            (booking.phase == "payment" && user_id == booking.kost.user._id)
           )
         ) {
           return {
@@ -265,7 +270,7 @@ const updateBookingByIdService = async ({
         }
       }
 
-      if (phase == "payment" && user_id != booking.buyer._id) {
+      if (phase == "payment" && user_id != booking.user._id) {
         return {
           status: "UNAUTHORIZED",
           statusCode: 401,
@@ -301,7 +306,7 @@ const updateBookingByIdService = async ({
 
     let inDateFormated;
     if (in_date) {
-      if (user_id != booking.buyer._id) {
+      if (user_id != booking.user._id) {
         return {
           status: "UNAUTHORIZED",
           statusCode: 401,
@@ -326,7 +331,7 @@ const updateBookingByIdService = async ({
 
     let outDateFormated;
     if (out_date) {
-      if (user_id != booking.buyer._id) {
+      if (user_id != booking.user._id) {
         return {
           status: "UNAUTHORIZED",
           statusCode: 401,
@@ -351,7 +356,7 @@ const updateBookingByIdService = async ({
 
     let proofPhotoUrl;
     if (proof_photo) {
-      if (user_id != booking.buyer._id) {
+      if (user_id != booking.user._id) {
         return {
           status: "UNAUTHORIZED",
           statusCode: 401,
@@ -380,13 +385,15 @@ const updateBookingByIdService = async ({
       proof_photo_url: proofPhotoUrl,
       in_date: inDateFormated,
       out_date: outDateFormated,
+      time,
+      price,
     });
     return {
       status: "SUCCESS",
       statusCode: 200,
       message: `booking updated`,
       data: {
-        updated_booking: null,
+        updated_booking: updatedBooking,
       },
     };
   } catch (err) {
@@ -401,11 +408,11 @@ const updateBookingByIdService = async ({
   }
 };
 
-const deleteBookingById = async ({ id,user_id }) => {
+const deleteBookingById = async ({ id, user_id }) => {
   try {
     const booking = await BookingRepositories.findBookingByIdRepo({ id });
 
-    if (user_id != booking.buyer._id && user_id != booking.kost.user._id) {
+    if (user_id != booking.user._id && user_id != booking.kost.user._id) {
       return {
         status: "UNAUTHORIZED",
         statusCode: 401,

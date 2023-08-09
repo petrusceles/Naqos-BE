@@ -2,11 +2,11 @@ const ReviewServices = require("../services/review.services.js");
 
 const createReview = async (req, res) => {
   const user_id = req.session.passport.user._id;
-  const { booking_id, star, review } = req.body;
+  const { kost_id, star, review } = req.body;
   const { status, statusCode, message, data } =
     await ReviewServices.createReviewService({
       user_id,
-      booking_id,
+      kost_id,
       star,
       review,
     });
@@ -18,8 +18,10 @@ const createReview = async (req, res) => {
 };
 
 const findAllReviews = async (req, res) => {
+  const query = req.query;
+  console.log(query)
   const { status, statusCode, message, data } =
-    await ReviewServices.findAllReviewsService();
+    await ReviewServices.findAllReviewsService({ query });
   return res.status(statusCode).json({
     status,
     message,
@@ -41,12 +43,12 @@ const findReviewById = async (req, res) => {
 const updateReviewById = async (req, res) => {
   const { id } = req.params;
   const user_id = req.session.passport.user._id;
-  const { booking_id, star, review } = req.body;
+  const { kost_id, star, review } = req.body;
   const { status, statusCode, message, data } =
     await ReviewServices.updateReviewByIdService({
       user_id,
       id,
-      booking_id,
+      kost_id,
       star,
       review,
     });
@@ -57,16 +59,17 @@ const updateReviewById = async (req, res) => {
   });
 };
 
-const deleteReviewById = async (req,res) => {
+const deleteReviewById = async (req, res) => {
   const { id } = req.params;
+  const user_id = req.session.passport.user._id;
   const { status, statusCode, message, data } =
-    await ReviewServices.updateReviewByIdService({id});
+    await ReviewServices.deleteReviewService({ id, user_id });
   return res.status(statusCode).json({
     status,
     message,
     data,
   });
-}
+};
 
 module.exports = {
   createReview,

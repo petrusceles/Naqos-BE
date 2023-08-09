@@ -21,7 +21,7 @@ const createKost = async (req, res) => {
     month_price,
     year_price,
   } = req.body;
-  
+
   let outsidePhotos = req.files.outside_photos;
   let insidePhotos = req.files.inside_photos;
   let roomPhotos = req.files.room_photos;
@@ -60,9 +60,15 @@ const createKost = async (req, res) => {
 };
 
 const searchAllKostsByKeyword = async (req, res) => {
-  const { keyword } = req.query;
+  const { keyword, limit, sorted_by, ...search_by } = req.query;
+  // console.log(search_by)
   const { status, statusCode, message, data } =
-    await KostService.searchAllKostsByKeywordService({ keyword });
+    await KostService.searchAllKostsByKeywordService({
+      keyword,
+      limit,
+      sorted_by,
+      search_by,
+    });
   return res.status(statusCode).json({
     status,
     message,
@@ -159,10 +165,21 @@ const deleteKostFacilityById = async (req, res) => {
   });
 };
 
+const findAllCities = async (req, res) => {
+  const { status, statusCode, message, data } =
+    await KostService.findAllCitiesService();
+  return res.status(statusCode).json({
+    status,
+    message,
+    data,
+  });
+};
+
 module.exports = {
   createKost,
   searchAllKostsByKeyword,
   findKostById,
   updateKostById,
   deleteKostFacilityById,
+  findAllCities,
 };

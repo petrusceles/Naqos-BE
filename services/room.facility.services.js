@@ -69,7 +69,7 @@ const findAllRoomFacilitiesService = async () => {
         statusCode: 404,
         message: "room facility is empty",
         data: {
-          room_facilites: null,
+          room_facilities: null,
         },
       };
     }
@@ -78,7 +78,7 @@ const findAllRoomFacilitiesService = async () => {
       statusCode: 200,
       message: "all room facilities retrieved",
       data: {
-        room_facilites: roomFacilities,
+        room_facilities: roomFacilities,
       },
     };
   } catch (err) {
@@ -87,7 +87,7 @@ const findAllRoomFacilitiesService = async () => {
       statusCode: 500,
       message: err.message,
       data: {
-        room_facilites: null,
+        room_facilities: null,
       },
     };
   }

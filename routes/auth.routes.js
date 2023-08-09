@@ -14,6 +14,8 @@ routes.post(
   })
 );
 
+routes.get("/me", authMiddlewares.checkAuthenticated, AuthControllers.me)
+
 routes.get("/login/success", AuthControllers.loginSuccess);
 routes.get("/login/failed", AuthControllers.loginFailed);
 routes.delete("/logout", AuthControllers.logout);

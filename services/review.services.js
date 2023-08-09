@@ -1,10 +1,26 @@
 const ReviewRepositories = require("../repositories/review.repositories.js");
 const BookingRepositories = require("../repositories/booking.repositories.js");
-const createReviewService = async ({ user_id, booking_id, star, review }) => {
+const KostRepositories = require("../repositories/kost.repositories.js");
+const createReviewService = async ({ user_id, kost_id, star, review }) => {
   try {
-    const booking = await BookingRepositories.findBookingByIdRepo({
-      id: booking_id,
+    let booking = await BookingRepositories.findAllBookingsRepo({
+      query: {
+        kost: kost_id,
+        user: user_id,
+      },
     });
+    if (!booking.length) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 400,
+        message: "cannot review unbooked kost",
+        data: {
+          review: null,
+        },
+      };
+    }
+
+    booking = booking[0];
 
     if (booking.phase != "confirmation") {
       return {
@@ -17,7 +33,7 @@ const createReviewService = async ({ user_id, booking_id, star, review }) => {
       };
     }
 
-    if (user_id != booking.buyer.id) {
+    if (user_id != booking.user.id) {
       return {
         status: "UNAUTHORIZED",
         statusCode: 401,
@@ -26,7 +42,8 @@ const createReviewService = async ({ user_id, booking_id, star, review }) => {
     }
 
     const reviewData = await ReviewRepositories.createReviewRepo({
-      booking,
+      user_id,
+      kost_id,
       star,
       review,
     });
@@ -50,18 +67,23 @@ const createReviewService = async ({ user_id, booking_id, star, review }) => {
   }
 };
 
-const findAllReviewsService = async () => {
+const findAllReviewsService = async ({ query }) => {
   try {
-    const reviews = await ReviewRepositories.findAllReviewsRepo();
+    const reviews = await ReviewRepositories.findAllReviewsRepo({ query });
     if (!reviews.length) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
         message: "reviews is empty",
-        reviews: null,
+        data: null,
       };
     }
-    return reviews;
+    return {
+      status: "FOUND",
+      statusCode: 200,
+      message: "reviews retrieved",
+      data: reviews,
+    };
   } catch (err) {
     return {
       status: "INTERNAL_SERVER_ERROR",
@@ -76,16 +98,21 @@ const findAllReviewsService = async () => {
 
 const findReviewByIdService = async ({ id }) => {
   try {
-    const reviews = await ReviewRepositories.findReviewByIdRepo({ id });
-    if (!reviews) {
+    const review = await ReviewRepositories.findReviewByIdRepo({ id });
+    if (!review) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
         message: "review not found",
-        reviews: null,
+        data: null,
       };
     }
-    return reviews;
+    return {
+      status: "FOUND",
+      statusCode: 400,
+      message: "review retrieved",
+      data: review,
+    };
   } catch (err) {
     return {
       status: "INTERNAL_SERVER_ERROR",
@@ -101,7 +128,7 @@ const findReviewByIdService = async ({ id }) => {
 const updateReviewByIdService = async ({
   user_id,
   id,
-  booking_id,
+  kost_id,
   phase,
   star,
   review,
@@ -117,19 +144,22 @@ const updateReviewByIdService = async ({
       };
     }
 
-    if (user_id != reviewData.booking.buyer._id) {
+    if (user_id != reviewData.user._id) {
       return {
         status: "UNAUTHORIZED",
         statusCode: 401,
-        message: "user cannot review",
+        message: "user cannot update review",
         updated_review: null,
       };
     }
 
-    let booking;
-    if (booking_id) {
-      booking = await BookingRepositories.findBookingByIdRepo({
-        id: booking_id,
+    let user, kost;
+    if (user_id && kost_id) {
+      let booking = await BookingRepositories.findAllBookingsRepo({
+        query: {
+          user: user_id,
+          kost: kost_id,
+        },
       });
       if (!booking) {
         return {
@@ -150,11 +180,14 @@ const updateReviewByIdService = async ({
           },
         };
       }
+      user = user_id;
+      kost = kost_id;
     }
 
     const updatedReview = await ReviewRepositories.updateReviewByIdRepo({
       id,
-      booking,
+      user,
+      kost,
       phase,
       star,
       review,
@@ -177,7 +210,7 @@ const updateReviewByIdService = async ({
   }
 };
 
-const deleteReviewService = async ({ id }) => {
+const deleteReviewService = async ({ id, user_id }) => {
   try {
     const reviewData = await ReviewRepositories.findReviewByIdRepo({ id });
     if (!reviewData) {
@@ -185,6 +218,15 @@ const deleteReviewService = async ({ id }) => {
         status: "NOT_FOUND",
         statusCode: 404,
         message: "review not found",
+        deleted_review: null,
+      };
+    }
+
+    if (reviewData.user != user_id) {
+      return {
+        status: "UNAUTHORIZED",
+        statusCode: 401,
+        message: "user cannot delete this review",
         deleted_review: null,
       };
     }

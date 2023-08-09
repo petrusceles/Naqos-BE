@@ -14,6 +14,14 @@ const loginFailed = (req, res) => {
   });
 };
 
+const me = (req,res) => {
+  return res.status(200).json({
+    status:"SUCESS",
+    message: "user data retrieved",
+    data: req.session.passport.user
+  })
+}
+
 const logout = async (req, res) => {
   try {
     await req.logout((err) => {
@@ -42,4 +50,5 @@ module.exports = {
   loginSuccess,
   loginFailed,
   logout,
+  me
 };

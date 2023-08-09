@@ -110,9 +110,9 @@ KostSchema.index(
     weights: {
       name: 6,
       address: 5,
-      province: 4,
-      district: 3,
-      subdistrict: 2,
+      district: 4,
+      subdistrict: 3,
+      province: 2,
       description: 1,
     },
   }

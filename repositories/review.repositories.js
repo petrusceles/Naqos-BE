@@ -4,45 +4,52 @@ const opts = {
   runValidators: true,
 };
 
-const createReviewRepo = async ({ booking, star, review }) => {
+const createReviewRepo = async ({ user_id, kost_id, star, review }) => {
   const reviewData = await Review.create({
-    booking,
+    kost: kost_id,
+    user: user_id,
     star,
     review,
   });
   return reviewData;
 };
 
-const findAllReviewsRepo = async () => {
-  const reviews = await Review.find().populate({
-    path: "booking",
-    populate: {
-      path: "buyer",
+const findAllReviewsRepo = async ({ query }) => {
+  const reviews = await Review.find(query)
+    .populate({
+      path: "kost",
+      populate: {
+        path: "user",
+        select: "-password",
+      },
+    })
+    .populate({
+      path: "user",
       select: "-password",
-    },
-  });;
+    });
   return reviews;
 };
 
 const findReviewByIdRepo = async ({ id }) => {
   const review = await Review.findById(id).populate({
-    path: "booking",
+    path: "kost",
     populate: {
-        path:"buyer",
-        select: "-password"
-    }
+      path: "user",
+      select: "-password",
+    },
   });
   return review;
 };
 
-const updateReviewByIdRepo = async ({ id, booking, star, review }) => {
+const updateReviewByIdRepo = async ({ id, kost, user, star, review }) => {
   const updatedReview = await Review.updateOne(
     {
       _id: id,
     },
     {
       $set: {
-        booking,
+        user,
+        kost,
         star,
         review,
       },

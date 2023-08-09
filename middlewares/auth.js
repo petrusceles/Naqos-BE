@@ -21,7 +21,7 @@ const checkNotAuthenticated = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  if (req.session.passport.user.role.name != "admin") {
+  if (req.session.passport.user.role != "admin") {
     return res.status(401).json({
       status: "UNAUTHORIZED",
       message: "unauthorized",
@@ -32,7 +32,7 @@ const isAdmin = (req, res, next) => {
 };
 
 const isTenant = (req, res, next) => {
-  if (req.session.passport.user.role.name != "tenant") {
+  if (req.session.passport.user.role != "tenant") {
     return res.status(401).json({
       status: "UNAUTHORIZED",
       message: "unauthorized",
@@ -42,7 +42,7 @@ const isTenant = (req, res, next) => {
   next();
 };
 const isBuyer = (req, res, next) => {
-  if (req.session.passport.user.role.name != "buyer") {
+  if (req.session.passport.user.role != "buyer") {
     return res.status(401).json({
       status: "UNAUTHORIZED",
       message: "unauthorized",

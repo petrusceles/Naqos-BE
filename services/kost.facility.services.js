@@ -63,14 +63,14 @@ const findAllKostFacilitiesService = async () => {
   try {
     const kostFacilities =
       await KostFacilityRepositories.findAllKostFacilitiesRepo();
-      
+
     if (!kostFacilities.length) {
       return {
         status: "NOT_FOUND",
         statusCode: 404,
         message: "kost facility is empty",
         data: {
-          kost_facilites: null,
+          kost_facilities: null,
         },
       };
     }
@@ -79,7 +79,7 @@ const findAllKostFacilitiesService = async () => {
       statusCode: 200,
       message: "all kost facilities retrieved",
       data: {
-        kost_facilites: kostFacilities,
+        kost_facilities: kostFacilities,
       },
     };
   } catch (err) {
@@ -88,7 +88,7 @@ const findAllKostFacilitiesService = async () => {
       statusCode: 500,
       message: err.message,
       data: {
-        kost_facilites: null,
+        kost_facilities: null,
       },
     };
   }

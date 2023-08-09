@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 const ReviewSchema = new mongoose.Schema(
   {
-    booking: {
+    user: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
-      ref: "Booking",
+      ref: "User",
+    },
+    kost: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "Kost",
     },
     star: {
       type: Number,
@@ -13,9 +18,9 @@ const ReviewSchema = new mongoose.Schema(
       max: 5,
       validate: {
         validator: (value) => {
-          return /^\d+(\.\d{1})?$/.test(value);
+          return /^\d+$/.test(value);
         },
-        message: "star value must be a number with up to one decimal place",
+        message: "star value must be an integer number",
       },
     },
     review: {

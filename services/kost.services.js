@@ -199,10 +199,18 @@ const createKostService = async ({
   }
 };
 
-const searchAllKostsByKeywordService = async ({ keyword }) => {
+const searchAllKostsByKeywordService = async ({
+  keyword,
+  limit,
+  sorted_by,
+  search_by,
+}) => {
   try {
     const kosts = await KostRepositories.searchAllKostsByKeywordRepo({
       keyword,
+      limit,
+      sorted_by,
+      search_by,
     });
     if (!kosts.length) {
       return {
@@ -608,10 +616,44 @@ const deleteKostByIdService = async ({ id, user }) => {
   }
 };
 
+const findAllCitiesService = async () => {
+  try {
+    const kostCities = await KostRepositories.findAllCitiesRepo();
+    if (!kostCities) {
+      return {
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: "kost cities not found",
+        data: {
+          kost_cities: null,
+        },
+      };
+    }
+    return {
+      status: "SUCCESS",
+      statusCode: 200,
+      message: "kost cities retrieved",
+      data: {
+        kost_cities: kostCities,
+      },
+    };
+  } catch (err) {
+    return {
+      status: "INTERNAL_SERVER_ERROR",
+      statusCode: 500,
+      message: err.message,
+      data: {
+        kost_cities: null,
+      },
+    };
+  }
+};
+
 module.exports = {
   createKostService,
   findKostByIdService,
   searchAllKostsByKeywordService,
   updateKostByIdService,
   deleteKostByIdService,
+  findAllCitiesService,
 };

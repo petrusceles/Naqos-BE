@@ -5,6 +5,12 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const flash = require("express-flash")
+const cors = require("cors")
+app.use(cors({
+  origin:true,
+  credentials:true,
+  
+}));
 require("dotenv").config();
 app.use(express.json());
 
