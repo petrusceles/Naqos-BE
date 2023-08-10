@@ -204,14 +204,82 @@ const searchAllKostsByKeywordService = async ({
   limit,
   sorted_by,
   search_by,
+  sort,
 }) => {
   try {
+    let keywordQuery = {};
+    if (keyword) {
+      keywordQuery.$text = { $search: `\"${keyword}\"` };
+    }
+
+    let query = {
+      $and: [],
+    };
+    if (search_by) {
+      query = Object.assign(query, keywordQuery, search_by);
+    }
+    
+
+    // console.log(query);
+    delete query?.sort_price
+
+    for (const key in query) {
+      if (Object.hasOwnProperty.call(query, key)) {
+        switch (key) {
+          case "kost_type":
+            query["$and"] = [
+              ...query?.$and,
+              { type: { $in: query.kost_type } },
+            ];
+
+            delete query.kost_type;
+            break;
+
+          case "time": {
+            for (const time of query?.time) {
+              const timeQuery = `${time}_price`;
+              query["$and"] = [
+                ...query["$and"],
+                { [timeQuery]: { $exists: true } },
+              ];
+              delete query.time;
+            }
+            break;
+          }
+
+          case "room_facility":
+            query["$and"] = [
+              ...query?.$and,
+              { room_facilities: { $all: query.room_facility } },
+            ];
+            delete query.room_facility;
+            break;
+
+          case "kost_facility":
+            query["$and"] = [
+              ...query?.$and,
+              { facilities: { $all: query.kost_facility } },
+            ];
+            delete query.kost_facility;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    delete query.is;
+
+    if (!query.$and.length) {
+      delete query.$and;
+    }
+
     const kosts = await KostRepositories.searchAllKostsByKeywordRepo({
-      keyword,
+      query,
       limit,
       sorted_by,
-      search_by,
+      sort,
     });
+    // console.log(kosts);
     if (!kosts.length) {
       return {
         status: "NOT_FOUND",

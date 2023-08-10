@@ -60,7 +60,7 @@ const createKost = async (req, res) => {
 };
 
 const searchAllKostsByKeyword = async (req, res) => {
-  const { keyword, limit, sorted_by, ...search_by } = req.query;
+  const { keyword, limit, sorted_by, sort, ...search_by } = req.query;
   // console.log(search_by)
   const { status, statusCode, message, data } =
     await KostService.searchAllKostsByKeywordService({
@@ -68,6 +68,7 @@ const searchAllKostsByKeyword = async (req, res) => {
       limit,
       sorted_by,
       search_by,
+      sort,
     });
   return res.status(statusCode).json({
     status,

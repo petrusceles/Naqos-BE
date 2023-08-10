@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const Kost = require("../models/kost.model.js");
 
 const createKostRepo = async ({
@@ -76,21 +76,11 @@ const findAllKostsByNameRepo = async ({ name }) => {
 };
 
 const searchAllKostsByKeywordRepo = async ({
-  keyword,
+  query,
   limit,
   sorted_by,
-  search_by,
+  sort,
 }) => {
-  let keywordQuery = {};
-  if (keyword) {
-    keywordQuery.$text = { $search: `\"${keyword}\"` };
-  }
-
-  let query = {};
-  if (search_by) {
-    query = Object.assign(keywordQuery, search_by);
-  }
-  console.log(query);
   const kosts = await Kost.find(query)
     .populate({
       path: "user",
@@ -99,7 +89,7 @@ const searchAllKostsByKeywordRepo = async ({
     .populate("facilities")
     .populate("room_facilities")
     .populate("type")
-    .sort([[sorted_by, "asc"]])
+    .sort([[sorted_by, sort]])
     .limit(limit);
   return kosts;
 };
