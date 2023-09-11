@@ -19,7 +19,7 @@ const createReview = async (req, res) => {
 
 const findAllReviews = async (req, res) => {
   const query = req.query;
-  console.log(query)
+  // console.log(query)
   const { status, statusCode, message, data } =
     await ReviewServices.findAllReviewsService({ query });
   return res.status(statusCode).json({

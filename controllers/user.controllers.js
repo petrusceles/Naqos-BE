@@ -40,9 +40,18 @@ const findAllUser = async (req, res) => {
   });
 };
 
+const updateUserPasswordById = async (req,res) => {
+  const id = req.session.passport.user.id
+  console.log(id)
+  // const { status, statusCode, message, data } =
+  //   await UserService.findAllUsersService();
+  return res.status(statusCode);
+}
+
 const updateUserById = async (req, res) => {
   const id = req.params.id;
-  const { name, role, email, password, phone_number,is_verified } = req.body;
+  const { name, role, email, phone_number, is_verified, password, old_password, bank, bank_number, bank_name } = req.body;
+  // console.log(req.body);
   const avatar = req.fileEncoded;
   const { status, statusCode, message, data } =
     await UserService.updateUserByIdService({
@@ -50,11 +59,17 @@ const updateUserById = async (req, res) => {
       name,
       role,
       email,
-      password,
       phone_number,
       avatar,
       is_verified,
+      password,
+      old_password,
+      bank,
+      bank_number,
+      bank_name,
     });
+
+  req.session.passport.user = data?.updated_user;
   return res.status(statusCode).json({
     status,
     message,
@@ -79,4 +94,5 @@ module.exports = {
   findUserById,
   updateUserById,
   deleteUserById,
+  updateUserPasswordById,
 };

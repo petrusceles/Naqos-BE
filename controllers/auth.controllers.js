@@ -1,8 +1,12 @@
+const UserService = require("../services/user.services.js");
+
 const loginSuccess = (req, res) => {
   return res.status(200).json({
     status: "SUCCESS",
     message: "login success",
-    data: null,
+    data: {
+      user: req?.session?.passport?.user,
+    },
   });
 };
 
@@ -14,13 +18,13 @@ const loginFailed = (req, res) => {
   });
 };
 
-const me = (req,res) => {
+const me = (req, res) => {
   return res.status(200).json({
-    status:"SUCESS",
+    status: "SUCESS",
     message: "user data retrieved",
-    data: req.session.passport.user
-  })
-}
+    data: req.session.passport.user,
+  });
+};
 
 const logout = async (req, res) => {
   try {
@@ -50,5 +54,5 @@ module.exports = {
   loginSuccess,
   loginFailed,
   logout,
-  me
+  me,
 };

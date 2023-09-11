@@ -121,18 +121,81 @@ const findUserByIdService = async ({ id }) => {
   }
 };
 
+const updateUserPasswordByIdService = async ({
+  id,
+  password,
+  old_password,
+}) => {
+  try {
+    let currentUser = await UserRepositories.findUserByIdRepo({ id });
+    if (!currentUser) {
+      return {
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: "user not found",
+        data: {
+          updated_user: null,
+        },
+      };
+    }
+    const isOldPasswordValid = await bcrypt.compare(
+      old_password,
+      currentUser.password
+    );
+    if (!isOldPasswordValid) {
+      return {
+        status: "BAD_REQUEST",
+        statusCode: 401,
+        message: "invalid password",
+        data: {
+          updated_user: null,
+        },
+      };
+    }
+
+    const newPasswordHashed = await bcrypt.hash(old_password, 11);
+    const updatedUser = await UserRepositories.updateUserPasswordByIdRepo({
+      id,
+      password: newPasswordHashed,
+    });
+    return {
+      status: "SUCCESS",
+      statusCode: 200,
+      message: "success update password",
+      data: {
+        updated_user: updatedUser,
+      },
+    };
+  } catch (err) {
+    return {
+      status: "INTERNAL_SERVER_ERROR",
+      statusCode: 500,
+      message: err.message,
+      data: {
+        updated_user: null,
+      },
+    };
+  }
+};
+
 const updateUserByIdService = async ({
   id,
   name,
   role,
   email,
-  password,
   phone_number,
   avatar,
   is_verified,
+  password,
+  old_password,
+  bank,
+  bank_number,
+  bank_name,
 }) => {
   try {
-    let updatedUser = await UserRepositories.findUserByIdRepo({ id });
+    let updatedUser = await UserRepositories.findUserWithPasswordByIdRepo({
+      id,
+    });
     if (!updatedUser) {
       return {
         status: "NOT_FOUND",
@@ -145,7 +208,7 @@ const updateUserByIdService = async ({
     }
     if (name) {
       const users = await UserRepositories.findUsersByNameRepo({ name });
-      if (users.length) {
+      if (users.filter((user) => user.name != updatedUser.name).length) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
@@ -155,14 +218,19 @@ const updateUserByIdService = async ({
           },
         };
       }
-
-      updatedUser.name = name;
+      if (name != updatedUser.name) updatedUser.name = name;
     }
+
+    bank && (updatedUser.bank = bank);
+    bank_name && (updatedUser.bank_name = bank_name);
+    bank_number && (updatedUser.bank_number = bank_number);
+    console.log(updatedUser);
 
     if (role) {
       const isRoleAvailable = await RoleRepositories.findRolesByNameRepo({
         name: role,
       });
+
       if (!isRoleAvailable.length) {
         return {
           status: "BAD_REQUEST",
@@ -174,7 +242,7 @@ const updateUserByIdService = async ({
         };
       }
 
-      updatedUser.role = isRoleAvailable[0];
+      if (role != updatedUser?.role) updatedUser.role = isRoleAvailable[0];
     }
     if (is_verified !== undefined) {
       updatedUser.is_verified = is_verified;
@@ -184,8 +252,11 @@ const updateUserByIdService = async ({
       const isEmailOkay = await UserRepositories.findUsersByEmailRepo({
         email,
       });
-
-      if (isEmailOkay.length) {
+      if (
+        isEmailOkay.filter((user) => {
+          return user.email !== updatedUser.email;
+        }).length
+      ) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
@@ -195,21 +266,28 @@ const updateUserByIdService = async ({
           },
         };
       }
-
-      updatedUser.email = email;
-      updatedUser.is_verified = false;
-    }
-
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 11);
-      updatedUser.password = hashedPassword;
+      let isEmailSimilar = false;
+      for (const user of isEmailOkay) {
+        if (user?.email === updatedUser?.email) {
+          isEmailSimilar = true;
+          break;
+        }
+      }
+      if (!isEmailSimilar) {
+        updatedUser.is_verified = false;
+        updatedUser.email = email;
+      }
     }
 
     if (phone_number) {
       const isPhoneNumberOkay = await UserRepositories.findUsersByPhoneNumber({
         phone_number,
       });
-      if (isPhoneNumberOkay.length) {
+      if (
+        isPhoneNumberOkay.filter(
+          (user) => user.phone_number != updatedUser.phone_number
+        ).length
+      ) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
@@ -219,14 +297,45 @@ const updateUserByIdService = async ({
           },
         };
       }
-      updatedUser.phone_number = phone_number;
+
+      let isPhoneNumberSimilar = false;
+      for (const user of isPhoneNumberOkay) {
+        if (user?.phone_number === updatedUser?.phone_number) {
+          isPhoneNumberSimilar = true;
+          break;
+        }
+      }
+      if (!isPhoneNumberSimilar) {
+        updatedUser.phone_number = phone_number;
+      }
+    }
+
+    if (old_password && password) {
+      console.log(updatedUser.password);
+      const isOldPasswordValid = await bcrypt.compare(
+        old_password,
+        updatedUser.password
+      );
+      console.log(isOldPasswordValid);
+      if (!isOldPasswordValid) {
+        return {
+          status: "BAD_REQUEST",
+          statusCode: 401,
+          message: "invalid password",
+          data: {
+            updated_user: null,
+          },
+        };
+      }
+
+      const newPasswordHashed = await bcrypt.hash(password, 11);
+      updatedUser.password = newPasswordHashed;
     }
 
     if (avatar) {
       const oldAvatarPublicId = CloudinaryUtils.getPublicIdFromCloudinaryUrl(
         updatedUser.avatar_url
       );
-      const cloudinaryFolder = oldAvatarPublicId.split("/")[0];
 
       if (
         oldAvatarPublicId.split("/")[0] !=
@@ -243,9 +352,7 @@ const updateUserByIdService = async ({
     }
 
     await updatedUser.save();
-    if (password) {
-      updatedUser.password = "";
-    }
+    delete updatedUser.password;
     return {
       status: "SUCCESS",
       statusCode: 200,
@@ -318,4 +425,5 @@ module.exports = {
   findAllUsersService,
   findUserByIdService,
   deleteUserByIdService,
+  updateUserPasswordByIdService,
 };

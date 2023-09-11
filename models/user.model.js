@@ -31,7 +31,19 @@ const UserSchema = new mongoose.Schema(
     },
     avatar_url: {
       type: String,
-      require: false,
+      required: false,
+    },
+    bank: {
+      type: String,
+      required: false,
+    },
+    bank_number: {
+      type: String,
+      required: false,
+    },
+    bank_name: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }

@@ -25,6 +25,7 @@ const createBookingService = async ({
     }
 
     const user = await UserRepositories.findUserByIdRepo({ id: user_id });
+    
 
     if (!user) {
       return {

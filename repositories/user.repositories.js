@@ -31,27 +31,29 @@ const findUserByIdRepo = async ({ id }) => {
   return user;
 };
 
+const findUserWithPasswordByIdRepo = async ({ id }) => {
+  const user = await User.findById(id).populate("role");
+  return user;
+};
 const findUsersByNameRepo = async ({ name }) => {
   const users = await User.where("name").equals(name).populate("role");
   return users;
 };
 
 const findUserByNameRepo = async ({ name }) => {
-  const users = await User.findOne({name});
+  const users = await User.findOne({ name });
   return users;
 };
 
 const findUsersByEmailRepo = async ({ email }) => {
-  const users = await User.where("email")
-    .equals(email)
-    .populate("role");
+  const users = await User.where("email").equals(email).populate("role");
   return users;
 };
 
 const findUsersByPhoneNumber = async ({ phone_number }) => {
   const users = await User.where("phone_number")
     .equals(phone_number)
-    
+
     .populate("role");
   return users;
 };
@@ -61,14 +63,13 @@ const updateUserByIdRepo = async ({
   name,
   role,
   email,
-  password,
   phone_number,
   is_verified,
   avatar_url,
 }) => {
   const updatedUser = await User.updateOne(
     { _id: id },
-    { name, role, email, password, phone_number, is_verified, avatar_url }
+    { name, role, email, phone_number, is_verified, avatar_url }
   );
   return updatedUser;
 };
@@ -80,6 +81,7 @@ const deleteUserByIdRepo = async ({ id }) => {
   return deletedUser;
 };
 
+
 module.exports = {
   createUserRepo,
   findAllUsersRepo,
@@ -90,4 +92,5 @@ module.exports = {
   findUsersByEmailRepo,
   findUsersByPhoneNumber,
   findUserByNameRepo,
+  findUserWithPasswordByIdRepo,
 };

@@ -26,7 +26,6 @@ const createBookingRepo = async ({
 };
 
 const findAllBookingsRepo = async ({ query }) => {
-  console.log(query)
   const bookings = await Booking.find(query)
     .populate({
       path: "kost",

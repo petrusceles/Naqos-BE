@@ -34,7 +34,7 @@ passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser(async (req, user, done) => {
+passport.deserializeUser(async (user, done) => {
   try {
     const isUserExist = await UserRepositories.findUserByIdRepo({
       id: user._id,
