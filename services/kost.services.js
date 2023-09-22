@@ -201,6 +201,7 @@ const searchAllKostsByKeywordService = async ({
   sorted_by,
   search_by,
   sort,
+  skip
 }) => {
   try {
     let keywordQuery = {};
@@ -273,8 +274,9 @@ const searchAllKostsByKeywordService = async ({
       limit,
       sorted_by,
       sort,
+      skip,
     });
-    // console.log(kosts);
+    // console.log(kosts.length);
     if (!kosts.length) {
       return {
         status: "NOT_FOUND",
@@ -285,13 +287,16 @@ const searchAllKostsByKeywordService = async ({
         },
       };
     }
-
+    const kostTotal = await KostRepositories.findAllKostsCountRepo({query})
+    // console.log("KOST TOTAL", kostTotal);
     return {
       status: "SUCCESS",
       statusCode: 200,
       message: "kost retrieved",
       data: {
         kosts: kosts,
+        next_skip: parseInt(skip) + parseInt(limit),
+        next_limit: kostTotal,
       },
     };
   } catch (err) {

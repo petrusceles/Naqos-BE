@@ -72,11 +72,17 @@ const findAllKostsByNameRepo = async ({ name }) => {
   return kosts;
 };
 
+const findAllKostsCountRepo = async ({ query}) => {
+  const kostTotal = await Kost.count(query);
+  return kostTotal;
+};
+
 const searchAllKostsByKeywordRepo = async ({
   query,
   limit,
   sorted_by,
   sort,
+  skip
 }) => {
   const kosts = await Kost.find(query)
     .populate({
@@ -87,7 +93,8 @@ const searchAllKostsByKeywordRepo = async ({
     .populate("room_facilities")
     .populate("type")
     .sort([[sorted_by, sort]])
-    .limit(limit);
+    .limit(limit)
+    .skip(skip);
   return kosts;
 };
 
@@ -177,4 +184,5 @@ module.exports = {
   searchAllKostsByKeywordRepo,
   findAllKostsByNameRepo,
   findAllCitiesRepo,
+  findAllKostsCountRepo,
 };
