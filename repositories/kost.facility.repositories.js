@@ -11,6 +11,11 @@ const findKostFacilitiesByMultipleNameRepo = async ({ names }) => {
   return kostFacility;
 };
 
+const findKostFacilitiesByMultipleIdRepo = async ({ ids }) => {
+  const kostFacility = await KostFacility.where("_id").in(ids);
+  return kostFacility;
+};
+
 const findKostFacilityByIdRepo = async ({ id }) => {
   const kostFacility = await KostFacility.findById(id);
   return kostFacility;
@@ -50,4 +55,5 @@ module.exports = {
   deleteKostFacilityByIdRepo,
   findKostFacilityByIdRepo,
   findKostFacilitiesByMultipleNameRepo,
+  findKostFacilitiesByMultipleIdRepo,
 };

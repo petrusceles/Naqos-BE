@@ -224,7 +224,6 @@ const updateUserByIdService = async ({
     bank && (updatedUser.bank = bank);
     bank_name && (updatedUser.bank_name = bank_name);
     bank_number && (updatedUser.bank_number = bank_number);
-    console.log(updatedUser);
 
     if (role) {
       const isRoleAvailable = await RoleRepositories.findRolesByNameRepo({
@@ -311,12 +310,10 @@ const updateUserByIdService = async ({
     }
 
     if (old_password && password) {
-      console.log(updatedUser.password);
       const isOldPasswordValid = await bcrypt.compare(
         old_password,
         updatedUser.password
       );
-      console.log(isOldPasswordValid);
       if (!isOldPasswordValid) {
         return {
           status: "BAD_REQUEST",

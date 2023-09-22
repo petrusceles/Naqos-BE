@@ -20,7 +20,7 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ["day", "month", "year"],
+        values: ["week", "month", "year"],
         message: "{VALUE} is not supported",
       },
     },

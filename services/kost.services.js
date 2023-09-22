@@ -13,18 +13,16 @@ const createKostService = async ({
   district,
   subdistrict,
   type,
-  facilities,
+  kost_facilities,
   regulations,
   bans,
   description,
   outside_photos,
   inside_photos,
-  bank,
-  bank_number,
   room_facilities,
   room_total,
   room_remaining,
-  day_price,
+  week_price,
   month_price,
   year_price,
   room_photos,
@@ -42,10 +40,10 @@ const createKostService = async ({
       };
     }
 
-    const isKostTypeExist = await KostTypeRepositories.findKostTypesByNameRepo({
-      name: type,
+    const isKostTypeExist = await KostTypeRepositories.findKostTypeByIdRepo({
+      id: type,
     });
-    if (!isKostTypeExist.length) {
+    if (!isKostTypeExist) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
@@ -55,26 +53,24 @@ const createKostService = async ({
         },
       };
     }
-
     const kostFacilities =
-      await KostFacilityRepositories.findKostFacilitiesByMultipleNameRepo({
-        names: facilities,
+      await KostFacilityRepositories.findKostFacilitiesByMultipleIdRepo({
+        ids: kost_facilities,
       });
 
     if (!kostFacilities?.length) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
-        message: `kost facilities should not be empty`,
+        message: `kost kost_facilities should not be empty`,
         data: {
           created_kost: null,
         },
       };
     }
-
     const roomFacilities =
-      await RoomFacilityRepositories.findRoomFacilitiesByMultipleNameRepo({
-        names: room_facilities,
+      await RoomFacilityRepositories.findRoomFacilitiesByMultipleIdRepo({
+        ids: room_facilities,
       });
 
     if (!roomFacilities?.length) {
@@ -112,6 +108,7 @@ const createKostService = async ({
         },
       };
     }
+    
     if (
       !outside_photos?.length ||
       !inside_photos?.length ||
@@ -162,23 +159,22 @@ const createKostService = async ({
       province,
       district,
       subdistrict,
-      type: isKostTypeExist[0],
-      facilities: kostFacilities,
+      type: isKostTypeExist,
+      kost_facilities: kostFacilities,
       regulations,
       bans,
       description,
       outside_photos_url: outsidePhotosUrl,
       inside_photos_url: insidePhotosUrl,
-      bank,
-      bank_number,
       room_facilities: roomFacilities,
       room_total,
       room_remaining,
-      day_price,
+      week_price,
       month_price,
       year_price,
       room_photos_url: roomPhotosUrl,
     });
+    
     return {
       status: "SUCCESS",
       statusCode: 201,
@@ -218,10 +214,9 @@ const searchAllKostsByKeywordService = async ({
     if (search_by) {
       query = Object.assign(query, keywordQuery, search_by);
     }
-    
 
     // console.log(query);
-    delete query?.sort_price
+    delete query?.sort_price;
 
     for (const key in query) {
       if (Object.hasOwnProperty.call(query, key)) {
@@ -258,7 +253,7 @@ const searchAllKostsByKeywordService = async ({
           case "kost_facility":
             query["$and"] = [
               ...query?.$and,
-              { facilities: { $all: query.kost_facility } },
+              { kost_facilities: { $all: query.kost_facility } },
             ];
             delete query.kost_facility;
             break;
@@ -314,6 +309,7 @@ const searchAllKostsByKeywordService = async ({
 const findKostByIdService = async ({ id }) => {
   try {
     const kost = await KostRepositories.findKostByIdRepo({ id });
+    // console.log(kost);
     if (!kost) {
       return {
         status: "NOT_FOUND",
@@ -353,7 +349,7 @@ const updateKostByIdService = async ({
   district,
   subdistrict,
   type,
-  facilities,
+  kost_facilities,
   regulations,
   bans,
   description,
@@ -361,12 +357,10 @@ const updateKostByIdService = async ({
   outside_photos_onhold_url,
   inside_photos,
   inside_photos_onhold_url,
-  bank,
-  bank_number,
   room_facilities,
   room_total,
   room_remaining,
-  day_price,
+  week_price,
   month_price,
   year_price,
   room_photos,
@@ -397,12 +391,13 @@ const updateKostByIdService = async ({
       };
     }
 
+
     let newKostType;
     if (type) {
-      let newKostTypeTemp = await KostTypeRepositories.findKostTypesByNameRepo({
-        name: type,
+      let newKostTypeTemp = await KostTypeRepositories.findKostTypeByIdRepo({
+        id: type,
       });
-      if (!newKostTypeTemp?.length) {
+      if (!newKostTypeTemp) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
@@ -412,20 +407,20 @@ const updateKostByIdService = async ({
           },
         };
       }
-      newKostType = newKostTypeTemp[0];
+      newKostType = newKostTypeTemp;
     }
 
     let newKostFacilities;
-    if (facilities?.length && facilities != undefined) {
+    if (kost_facilities?.length && kost_facilities != undefined) {
       newKostFacilities =
-        await KostFacilityRepositories.findKostFacilitiesByMultipleNameRepo({
-          names: facilities,
+        await KostFacilityRepositories.findKostFacilitiesByMultipleIdRepo({
+          ids: kost_facilities,
         });
       if (!newKostFacilities.length) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
-          message: "unavailable kost facilities",
+          message: "unavailable kost kost_facilities",
           data: {
             updated_kost: null,
           },
@@ -436,14 +431,14 @@ const updateKostByIdService = async ({
     let newRoomFacilities;
     if (room_facilities?.length && room_facilities != undefined) {
       newRoomFacilities =
-        await RoomFacilityRepositories.findRoomFacilitiesByMultipleNameRepo({
-          names: room_facilities,
+        await RoomFacilityRepositories.findRoomFacilitiesByMultipleIdRepo({
+          ids: room_facilities,
         });
       if (!newRoomFacilities.length) {
         return {
           status: "BAD_REQUEST",
           statusCode: 400,
-          message: "unavailable room facilities",
+          message: "unavailable room kost_facilities",
           data: {
             updated_kost: null,
           },
@@ -600,18 +595,16 @@ const updateKostByIdService = async ({
       district,
       subdistrict,
       type: newKostType,
-      facilities: newKostFacilities,
+      kost_facilities: newKostFacilities,
       regulations,
       bans,
       description,
       outside_photos_url: outsidePhotosToUpload,
       inside_photos_url: insidePhotosToUpload,
-      bank,
-      bank_number,
       room_facilities: newRoomFacilities,
       room_total,
       room_remaining,
-      day_price,
+      week_price,
       month_price,
       year_price,
       room_photos_url: roomPhotosToUpload,

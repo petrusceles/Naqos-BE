@@ -31,7 +31,7 @@ const KostSchema = new mongoose.Schema(
       require: true,
       ref: "KostType",
     },
-    facilities: {
+    kost_facilities: {
       type: [mongoose.SchemaTypes.ObjectId],
       require: true,
       ref: "KostFacility",
@@ -77,7 +77,7 @@ const KostSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.Number,
       require: true,
     },
-    day_price: {
+    week_price: {
       type: mongoose.SchemaTypes.Number,
       require: true,
     },

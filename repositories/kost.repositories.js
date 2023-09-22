@@ -9,22 +9,21 @@ const createKostRepo = async ({
   district,
   subdistrict,
   type,
-  facilities,
+  kost_facilities,
   regulations,
   bans,
   description,
   outside_photos_url,
   inside_photos_url,
-  bank,
-  bank_number,
   room_facilities,
   room_total,
   room_remaining,
-  day_price,
+  week_price,
   month_price,
   year_price,
   room_photos_url,
 }) => {
+  // console.log("MASUK-CREATE-KOST")
   const kost = await Kost.create({
     name,
     user,
@@ -33,18 +32,16 @@ const createKostRepo = async ({
     district,
     subdistrict,
     type,
-    facilities,
+    kost_facilities,
     regulations,
     bans,
     description,
     outside_photos_url,
     inside_photos_url,
-    bank,
-    bank_number,
     room_facilities,
     room_total,
     room_remaining,
-    day_price,
+    week_price,
     month_price,
     year_price,
     room_photos_url,
@@ -61,7 +58,7 @@ const findAllCitiesRepo = async () => {
 const findAllKostsRepo = async () => {
   const kost = await Kost.find()
     .populate({ path: "user", select: "-password" })
-    .populate("facilities")
+    .populate("kost_facilities")
     .populate("type");
   return kost;
 };
@@ -70,7 +67,7 @@ const findAllKostsByNameRepo = async ({ name }) => {
   const kosts = await Kost.where("name")
     .equals(name)
     .populate({ path: "user", select: "-password" })
-    .populate("facilities")
+    .populate("kost_facilities")
     .populate("type");
   return kosts;
 };
@@ -86,7 +83,7 @@ const searchAllKostsByKeywordRepo = async ({
       path: "user",
       select: "-password",
     })
-    .populate("facilities")
+    .populate("kost_facilities")
     .populate("room_facilities")
     .populate("type")
     .sort([[sorted_by, sort]])
@@ -101,7 +98,7 @@ const findKostByIdRepo = async ({ id }) => {
       path: "user",
       select: "-password",
     })
-    .populate("facilities")
+    .populate("kost_facilities")
     .populate("room_facilities")
     .populate("type");
   return kost;
@@ -116,7 +113,7 @@ const updateKostByIdRepo = async ({
   district,
   subdistrict,
   type,
-  facilities,
+  kost_facilities,
   regulations,
   bans,
   description,
@@ -127,7 +124,7 @@ const updateKostByIdRepo = async ({
   room_facilities,
   room_total,
   room_remaining,
-  day_price,
+  week_price,
   month_price,
   year_price,
   room_photos_url,
@@ -145,7 +142,7 @@ const updateKostByIdRepo = async ({
         district,
         subdistrict,
         type,
-        facilities,
+        kost_facilities,
         regulations,
         bans,
         description,
@@ -156,7 +153,7 @@ const updateKostByIdRepo = async ({
         room_facilities,
         room_total,
         room_remaining,
-        day_price,
+        week_price,
         month_price,
         year_price,
         room_photos_url,

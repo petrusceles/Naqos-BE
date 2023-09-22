@@ -7,7 +7,9 @@ const findKostTypesByNameRepo = async ({ name }) => {
 };
 
 const findKostTypeByIdRepo = async ({ id }) => {
+  console.log(id);
   const kostType = await KostType.findById(id);
+  console.log(kostType);
   return kostType;
 };
 

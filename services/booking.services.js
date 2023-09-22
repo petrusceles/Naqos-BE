@@ -13,6 +13,7 @@ const createBookingService = async ({
   price,
 }) => {
   try {
+    console.log(kost_id);
     if (!user_id || !kost_id || !in_date || !out_date || !time || !price) {
       return {
         status: "BAD_REQUEST",

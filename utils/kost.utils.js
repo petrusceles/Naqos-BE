@@ -14,6 +14,16 @@ const deleteRemovedPhotosUrl = async ({ photosUrl, photosOnholdUrl }) => {
   }
 };
 
+const removeNullProperty = (data) => {
+  for (const key in data) {
+    if (data[key] == null) {
+      delete data[key];
+    }
+  }
+  return data;
+};
+
 module.exports = {
   deleteRemovedPhotosUrl,
+  removeNullProperty,
 };
