@@ -20,9 +20,16 @@ const createBooking = async (req, res) => {
 };
 
 const findAllBookings = async (req, res) => {
-  let query = req.query;
+  let { skip, limit,sorted_by,sort, ...search_by } = req.query;
+  console.log(search_by);
   const { status, statusCode, message, data } =
-    await BookingServices.findAllBookingsService({ query });
+    await BookingServices.findAllBookingsService({
+      limit,
+      sorted_by,
+      search_by,
+      sort,
+      skip,
+    });
   return res.status(statusCode).json({
     status,
     message,

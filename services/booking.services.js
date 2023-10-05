@@ -26,7 +26,6 @@ const createBookingService = async ({
     }
 
     const user = await UserRepositories.findUserByIdRepo({ id: user_id });
-    
 
     if (!user) {
       return {
@@ -108,9 +107,48 @@ const createBookingService = async ({
   }
 };
 
-const findAllBookingsService = async ({ query }) => {
+const findAllBookingsService = async ({
+  limit,
+  sorted_by,
+  search_by,
+  sort,
+  skip,
+}) => {
   try {
-    const bookings = await BookingRepositories.findAllBookingsRepo({ query });
+    let query = {
+      $and: [],
+    };
+    if (search_by) {
+      query = Object.assign(query, search_by);
+    }
+
+    for (const key in query) {
+      if (Object.hasOwnProperty.call(query, key)) {
+        switch (key) {
+          case "phase":
+            query["$and"] = [...query?.$and, { phase: { $in: query?.phase } }];
+            delete query?.phase;
+            break;
+          case "user":
+            query["$and"] = [...query?.$and, { user: { $in: query?.user } }];
+            delete query?.user;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    if (!query.$and.length) {
+      delete query.$and;
+    }
+
+    const bookings = await BookingRepositories.findAllBookingsRepo({
+      query,
+      skip,
+      limit,
+      sorted_by,
+      sort,
+    });
     if (!bookings?.length) {
       return {
         status: "NOT_FOUND",
@@ -122,12 +160,18 @@ const findAllBookingsService = async ({ query }) => {
       };
     }
 
+    const bookingTotal = await BookingRepositories.findAllBookingsCountRepo({
+      query,
+    });
+
     return {
       status: "SUCCESS",
       statusCode: 200,
       message: "bookings retrieved",
       data: {
         bookings: bookings,
+        next_skip: parseInt(skip) + parseInt(limit),
+        next_limit: bookingTotal,
       },
     };
   } catch (err) {
@@ -380,6 +424,7 @@ const updateBookingByIdService = async ({
         CloudinaryUtils.deleteAllImages([oldProofPhotoPublicId]);
       }
     }
+    console.log(proofPhotoUrl);
 
     const updatedBooking = await BookingRepositories.updateBookingByIdRepo({
       id,

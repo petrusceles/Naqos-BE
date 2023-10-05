@@ -108,7 +108,7 @@ const createKostService = async ({
         },
       };
     }
-    
+
     if (
       !outside_photos?.length ||
       !inside_photos?.length ||
@@ -174,7 +174,7 @@ const createKostService = async ({
       year_price,
       room_photos_url: roomPhotosUrl,
     });
-    
+
     return {
       status: "SUCCESS",
       statusCode: 201,
@@ -201,7 +201,7 @@ const searchAllKostsByKeywordService = async ({
   sorted_by,
   search_by,
   sort,
-  skip
+  skip,
 }) => {
   try {
     let keywordQuery = {};
@@ -215,10 +215,7 @@ const searchAllKostsByKeywordService = async ({
     if (search_by) {
       query = Object.assign(query, keywordQuery, search_by);
     }
-
-    // console.log(query);
     delete query?.sort_price;
-
     for (const key in query) {
       if (Object.hasOwnProperty.call(query, key)) {
         switch (key) {
@@ -230,7 +227,6 @@ const searchAllKostsByKeywordService = async ({
 
             delete query.kost_type;
             break;
-
           case "time": {
             for (const time of query?.time) {
               const timeQuery = `${time}_price`;
@@ -242,7 +238,6 @@ const searchAllKostsByKeywordService = async ({
             }
             break;
           }
-
           case "room_facility":
             query["$and"] = [
               ...query?.$and,
@@ -263,6 +258,7 @@ const searchAllKostsByKeywordService = async ({
         }
       }
     }
+    console.log(query);
     delete query.is;
 
     if (!query.$and.length) {
@@ -276,7 +272,7 @@ const searchAllKostsByKeywordService = async ({
       sort,
       skip,
     });
-    // console.log(kosts.length);
+
     if (!kosts.length) {
       return {
         status: "NOT_FOUND",
@@ -287,8 +283,8 @@ const searchAllKostsByKeywordService = async ({
         },
       };
     }
-    const kostTotal = await KostRepositories.findAllKostsCountRepo({query})
-    // console.log("KOST TOTAL", kostTotal);
+    const kostTotal = await KostRepositories.findAllKostsCountRepo({ query });
+
     return {
       status: "SUCCESS",
       statusCode: 200,
@@ -395,7 +391,6 @@ const updateKostByIdService = async ({
         },
       };
     }
-
 
     let newKostType;
     if (type) {

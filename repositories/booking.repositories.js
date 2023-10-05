@@ -25,7 +25,9 @@ const createBookingRepo = async ({
   return booking;
 };
 
-const findAllBookingsRepo = async ({ query }) => {
+const findAllBookingsRepo = async ({ query, limit, sorted_by, sort, skip }) => {
+  console.log("QUERY", query["$and"][1]);
+  console.log("QUERY_AFTER", query);
   const bookings = await Booking.find(query)
     .populate({
       path: "kost",
@@ -37,10 +39,17 @@ const findAllBookingsRepo = async ({ query }) => {
     .populate({
       path: "user",
       select: "-password",
-    });
+    })
+    .sort([[sorted_by, sort]])
+    .skip(skip)
+    .limit(limit);
   return bookings;
 };
 
+const findAllBookingsCountRepo = async ({ query }) => {
+  const bookingTotal = await Booking.count(query);
+  return bookingTotal;
+};
 // const findBooking
 
 const findBookingByIdRepo = async ({ id }) => {
@@ -105,4 +114,5 @@ module.exports = {
   findBookingByIdRepo,
   updateBookingByIdRepo,
   deleteBookingByIdRepo,
+  findAllBookingsCountRepo,
 };

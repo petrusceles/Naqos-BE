@@ -40,17 +40,28 @@ const findAllUser = async (req, res) => {
   });
 };
 
-const updateUserPasswordById = async (req,res) => {
-  const id = req.session.passport.user.id
-  console.log(id)
+const updateUserPasswordById = async (req, res) => {
+  const id = req.session.passport.user.id;
+  console.log(id);
   // const { status, statusCode, message, data } =
   //   await UserService.findAllUsersService();
   return res.status(statusCode);
-}
+};
 
 const updateUserById = async (req, res) => {
   const id = req.params.id;
-  const { name, role, email, phone_number, is_verified, password, old_password, bank, bank_number, bank_name } = req.body;
+  const {
+    name,
+    role,
+    email,
+    phone_number,
+    is_verified,
+    password,
+    old_password,
+    bank,
+    bank_number,
+    bank_name,
+  } = req.body;
   // console.log(req.body);
   const avatar = req.fileEncoded;
   const { status, statusCode, message, data } =
@@ -88,6 +99,29 @@ const deleteUserById = async (req, res) => {
   });
 };
 
+const userSendEmailVerif = async (req, res) => {
+  const id = req.session.passport.user._id;
+  const { verification_site } = req.body;
+
+  const { status, statusCode, message } =
+    await UserService.userSendEmailVerifService({ id, verification_site });
+  return res.status(statusCode).json({
+    status,
+    message,
+  });
+};
+
+const userVerifEmail = async (req, res) => {
+  const { token, id } = req?.query;
+  const { status, statusCode, message, data } =
+    await UserService.userVerifEmailService({ token, id });
+  return res.status(statusCode).json({
+    status,
+    message,
+    data,
+  });
+};
+
 module.exports = {
   createUser,
   findAllUser,
@@ -95,4 +129,6 @@ module.exports = {
   updateUserById,
   deleteUserById,
   updateUserPasswordById,
+  userSendEmailVerif,
+  userVerifEmail,
 };

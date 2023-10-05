@@ -1,8 +1,13 @@
 const UserRepositories = require("../repositories/user.repositories.js");
 const RoleRepositories = require("../repositories/role.repositories.js");
+const TokenRepositories = require("../repositories/token.repositories.js");
 const bcrypt = require("bcrypt");
 const CloudinaryUtils = require("../utils/cloudinary.utils.js");
 const cloudinary = require("../config/cloudinary.js");
+const sendEmail = require("../utils/email.utils.js");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 const createUserService = async ({
   name,
   role,
@@ -12,8 +17,8 @@ const createUserService = async ({
   avatar_url,
 }) => {
   try {
-    const roleData = await RoleRepositories.findRolesByNameRepo({ name: role });
-    if (!roleData.length) {
+    const roleData = await RoleRepositories.findRoleByIdRepo({ id: role });
+    if (!roleData) {
       return {
         status: "BAD_REQUEST",
         statusCode: 400,
@@ -26,7 +31,7 @@ const createUserService = async ({
     const hashedPassword = await bcrypt.hash(password, 11);
     const createdUser = await UserRepositories.createUserRepo({
       name,
-      role: roleData[0]._id,
+      role: roleData._id,
       email,
       password: hashedPassword,
       phone_number,
@@ -39,7 +44,7 @@ const createUserService = async ({
       statusCode: 201,
       message: `user created`,
       data: {
-        created_user: createdUser,
+        created_user: null,
       },
     };
   } catch (err) {
@@ -416,6 +421,87 @@ const deleteUserByIdService = async ({ id }) => {
   }
 };
 
+const userSendEmailVerifService = async ({ id, verification_site }) => {
+  try {
+    console.log(id);
+    let currentUser = await UserRepositories.findUserByIdRepo({ id });
+    if (!currentUser) {
+      return {
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: "user not found",
+      };
+    }
+    const generatedToken = crypto.randomBytes(32).toString("hex");
+
+    await TokenRepositories.createTokenRepo({
+      user: currentUser._id,
+      token: generatedToken,
+    });
+
+    const url = `${verification_site}?token=${generatedToken}&id=${currentUser._id}`;
+
+    await sendEmail(currentUser?.email, "Verify Email", url);
+    return {
+      status: "SUCCESS",
+      statusCode: 200,
+      message: "Email Sent",
+    };
+  } catch (err) {
+    return {
+      status: "INTERNAL_SERVER_ERROR",
+      statusCode: 500,
+      message: err.message,
+    };
+  }
+};
+
+const userVerifEmailService = async ({ token, id }) => {
+  try {
+    const user = await UserRepositories.findUserByIdRepo({ id });
+    if (!user) {
+      return {
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: "user not found",
+      };
+    }
+
+    const storedToken = await TokenRepositories.searchTokenByQueryRepo({
+      query: {
+        user: user.id,
+        token,
+      },
+    });
+
+    if (!storedToken) {
+      return {
+        status: "NOT_FOUND",
+        statusCode: 404,
+        message: "token not found",
+      };
+    }
+
+    await UserRepositories.updateUserByIdRepo({ id, is_verified: true });
+
+    await TokenRepositories.deleteTokenByIdRepo({
+      id: storedToken.id,
+    });
+    return {
+      status: "SUCCESS",
+      statusCode: 200,
+      message: "user verified",
+      data: storedToken,
+    };
+  } catch (err) {
+    return {
+      status: "INTERNAL_SERVER_ERROR",
+      statusCode: 500,
+      message: err.message,
+    };
+  }
+};
+
 module.exports = {
   createUserService,
   updateUserByIdService,
@@ -423,4 +509,6 @@ module.exports = {
   findUserByIdService,
   deleteUserByIdService,
   updateUserPasswordByIdService,
+  userSendEmailVerifService,
+  userVerifEmailService,
 };
