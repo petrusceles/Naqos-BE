@@ -113,6 +113,7 @@ const userSendEmailVerif = async (req, res) => {
 
 const userVerifEmail = async (req, res) => {
   const { token, id } = req?.query;
+  console.log(req?.query);
   const { status, statusCode, message, data } =
     await UserService.userVerifEmailService({ token, id });
   return res.status(statusCode).json({

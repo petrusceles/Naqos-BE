@@ -473,6 +473,7 @@ const userVerifEmailService = async ({ token, id }) => {
         token,
       },
     });
+    console.log("STORED TOKEN", storedToken)
 
     if (!storedToken) {
       return {
@@ -491,7 +492,7 @@ const userVerifEmailService = async ({ token, id }) => {
       status: "SUCCESS",
       statusCode: 200,
       message: "user verified",
-      data: storedToken,
+      data: user,
     };
   } catch (err) {
     return {

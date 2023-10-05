@@ -16,10 +16,5 @@ routes.put(
   UserControllers.updateUserById
 );
 routes.delete("/:id", UserControllers.deleteUserById);
-routes.post("/verif/send",authMiddlewares.checkAuthenticated, UserControllers.userSendEmailVerif)
-routes.post(
-  "/verif",
-  UserControllers.userVerifEmail
-);
 
 module.exports = routes;
