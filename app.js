@@ -6,24 +6,24 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
-const connectRedis = require("connect-redis");
+// const connectRedis = require("connect-redis");
+
+const redis = require("redis");
+const RedisStore = require("connect-redis").default;
+
+
 
 require("dotenv").config();
-
 app.use(express.json());
 app.set("trust proxy", 1);
-const redis = require("redis");
-const RedisStore = connectRedis(session);
 const redisClient = redis.createClient({
-  host: "localhost",
-  port: 6379,
+  url: "redis://redis:6379",
 });
 
-redisClient.on("error", function (err) {
-  console.log("Could not establish a connection with redis. " + err);
-});
-redisClient.on("connect", function (err) {
-  console.log("Connected to redis successfully");
+redisClient.connect().catch(console.error);
+
+let redisStore = new RedisStore({
+  client: redisClient,
 });
 app.use(
   cors({
@@ -44,7 +44,7 @@ app.use(
       secure: true,
       sameSite: "none",
     },
-    store: new RedisStore({ client: redisClient }),
+    store: redisStore,
   })
 );
 app.use(flash());
