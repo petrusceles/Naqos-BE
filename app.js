@@ -7,7 +7,7 @@ const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
 
-app.set('trust proxy', 1)
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: "https://naqos-fe.vercel.app",
@@ -29,7 +29,6 @@ app.use(
       secure: true,
       sameSite: "none",
     },
-    store:
   })
 );
 app.use(flash());
