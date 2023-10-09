@@ -6,6 +6,8 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
+
+app.enable("trust proxy");
 app.use(
   cors({
     origin: "https://naqos-fe.vercel.app",
@@ -16,7 +18,6 @@ require("dotenv").config();
 app.use(express.json());
 
 require("./config/passport.local.config.js");
-// app.enable("trust proxy");
 
 app.use(
   session({
