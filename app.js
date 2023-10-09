@@ -11,16 +11,13 @@ const cors = require("cors");
 const redis = require("redis");
 const RedisStore = require("connect-redis").default;
 
-
-
 require("dotenv").config();
 app.use(express.json());
 app.set("trust proxy", 1);
-const redisClient = redis.createClient({
-  url: "redis://redis:6379",
-});
+const redisClient = redis.createClient();
 
-redisClient.connect().catch(console.error);
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
+await redisClient.connect();
 
 let redisStore = new RedisStore({
   client: redisClient,
