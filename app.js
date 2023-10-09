@@ -16,8 +16,7 @@ app.use(express.json());
 app.set("trust proxy", 1);
 const redisClient = redis.createClient();
 
-redisClient.on("error", (err) => console.log("Redis Client Error", err));
-await redisClient.connect();
+redisClient.connect().catch(console.error);
 
 let redisStore = new RedisStore({
   client: redisClient,
