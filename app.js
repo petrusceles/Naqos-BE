@@ -21,9 +21,8 @@ require("./config/passport.local.config.js");
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
-    name: "EasyBluePelicanCyclic",
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
