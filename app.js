@@ -8,7 +8,7 @@ const flash = require("express-flash");
 const cors = require("cors");
 app.use(
   cors({
-    origin: true,
+    origin: "https://naqos-fe.vercel.app",
     credentials: true,
   })
 );
