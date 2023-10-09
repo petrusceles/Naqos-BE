@@ -6,6 +6,7 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
+const connectRedis = require("connect-redis");
 
 require("dotenv").config();
 
