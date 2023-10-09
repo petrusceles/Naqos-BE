@@ -6,21 +6,11 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
-// const connectRedis = require("connect-redis");
-
-const redis = require("redis");
-const RedisStore = require("connect-redis").default;
+const MongoStore = require("connect-mongo");
 
 require("dotenv").config();
 app.use(express.json());
 app.set("trust proxy", 1);
-const redisClient = redis.createClient();
-
-redisClient.connect().catch(console.error);
-
-let redisStore = new RedisStore({
-  client: redisClient,
-});
 app.use(
   cors({
     origin: "https://naqos-fe.vercel.app",
@@ -40,7 +30,9 @@ app.use(
       secure: true,
       sameSite: "none",
     },
-    store: redisStore,
+    store: MongoStore.create({
+      mongoUrl: process.env.DB_URI,
+    }),
   })
 );
 app.use(flash());
