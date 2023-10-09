@@ -80,7 +80,9 @@ const updateUserById = async (req, res) => {
       bank_name,
     });
 
+  console.log("BEFORE", req.session.passport.user);
   req.session.passport.user = data?.updated_user;
+  console.log("AFTER", req.session.passport.user);
   return res.status(statusCode).json({
     status,
     message,
