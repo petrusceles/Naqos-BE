@@ -4,32 +4,34 @@ const routes = require("./routes");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
-const flash = require("express-flash")
-const cors = require("cors")
-app.use(cors({
-  origin:true,
-  credentials:true,
-  
-}));
+const flash = require("express-flash");
+const cors = require("cors");
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 require("dotenv").config();
 app.use(express.json());
 
-require("./config/passport.local.config.js")
+require("./config/passport.local.config.js");
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
     },
   })
 );
-app.use(flash())
+app.use(flash());
 
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api", routes);
 
