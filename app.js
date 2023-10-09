@@ -7,15 +7,29 @@ const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
 
+require("dotenv").config();
+
+app.use(express.json());
 app.set("trust proxy", 1);
+const redis = require("redis");
+const RedisStore = connectRedis(session);
+const redisClient = redis.createClient({
+  host: "localhost",
+  port: 6379,
+});
+
+redisClient.on("error", function (err) {
+  console.log("Could not establish a connection with redis. " + err);
+});
+redisClient.on("connect", function (err) {
+  console.log("Connected to redis successfully");
+});
 app.use(
   cors({
     origin: "https://naqos-fe.vercel.app",
     credentials: true,
   })
 );
-require("dotenv").config();
-app.use(express.json());
 
 require("./config/passport.local.config.js");
 
@@ -29,6 +43,7 @@ app.use(
       secure: true,
       sameSite: "none",
     },
+    store: new RedisStore({ client: redisClient }),
   })
 );
 app.use(flash());
