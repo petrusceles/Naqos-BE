@@ -62,7 +62,7 @@ const updateUserById = async (req, res) => {
     bank_number,
     bank_name,
   } = req.body;
-  // console.log(req.body);
+  console.log(req.body);
   const avatar = req.fileEncoded;
   const { status, statusCode, message, data } =
     await UserService.updateUserByIdService({

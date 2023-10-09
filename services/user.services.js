@@ -354,13 +354,24 @@ const updateUserByIdService = async ({
     }
 
     await updatedUser.save();
-    delete updatedUser.password;
+    let returnedUser = {
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      role: updatedUser.role.name,
+      email: updatedUser.email,
+      phone_number: updatedUser.phone_number,
+      is_verified: updatedUser.is_verified,
+      avatar_url: updatedUser.avatar_url,
+      createdAt: updatedUser.createdAt,
+      updatedAt: updatedUser.updatedAt,
+      __v: updatedUser.__v,
+    };
     return {
       status: "SUCCESS",
       statusCode: 200,
       message: "user updated",
       data: {
-        updated_user: updatedUser,
+        updated_user: returnedUser,
       },
     };
   } catch (err) {
@@ -473,7 +484,7 @@ const userVerifEmailService = async ({ token, id }) => {
         token,
       },
     });
-    console.log("STORED TOKEN", storedToken)
+    console.log("STORED TOKEN", storedToken);
 
     if (!storedToken) {
       return {
