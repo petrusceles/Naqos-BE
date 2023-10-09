@@ -7,6 +7,7 @@ const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
 app.use(
+  "*",
   cors({
     origin: true,
     credentials: true,
