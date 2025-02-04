@@ -72,8 +72,8 @@ const findAllKostsByNameRepo = async ({ name }) => {
   return kosts;
 };
 
-const findAllKostsCountRepo = async ({ query}) => {
-  const kostTotal = await Kost.count(query);
+const findAllKostsCountRepo = async ({ query }) => {
+  const kostTotal = await Kost.countDocuments(query);
   return kostTotal;
 };
 
@@ -82,8 +82,10 @@ const searchAllKostsByKeywordRepo = async ({
   limit,
   sorted_by,
   sort,
-  skip
+  skip,
 }) => {
+  sort ??= "asc";
+  sorted_by ??= "name";
   const kosts = await Kost.find(query)
     .populate({
       path: "user",

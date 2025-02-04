@@ -434,7 +434,6 @@ const deleteUserByIdService = async ({ id }) => {
 
 const userSendEmailVerifService = async ({ id, verification_site }) => {
   try {
-    console.log(id);
     let currentUser = await UserRepositories.findUserByIdRepo({ id });
     if (!currentUser) {
       return {

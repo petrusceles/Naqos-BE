@@ -6,19 +6,25 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("express-flash");
 const cors = require("cors");
-const MongoStore = require("connect-mongo");
+var MongoDBStore = require("connect-mongodb-session")(session);
+
+// const MongoStore = require("connect-mongo");
 
 require("dotenv").config();
 app.use(express.json());
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: "https://naqos-fe.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
 
 require("./config/passport.local.config.js");
+var store = new MongoDBStore({
+  uri: process.env?.DB_URI,
+  collection: "sessions",
+});
 
 app.use(
   session({
@@ -27,12 +33,10 @@ app.use(
     saveUninitialized: true,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
-      secure: true,
-      sameSite: "none",
+      secure: false,
+      // sameSite: "none",
     },
-    store: MongoStore.create({
-      mongoUrl: process.env.DB_URI,
-    }),
+    store: store,
   })
 );
 app.use(flash());

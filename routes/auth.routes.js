@@ -3,7 +3,7 @@ const express = require("express");
 const routes = express.Router();
 const authMiddlewares = require("../middlewares/auth.js");
 const AuthControllers = require("../controllers/auth.controllers.js");
-const UserControllers = require("../controllers/user.controllers.js")
+const UserControllers = require("../controllers/user.controllers.js");
 routes.post(
   "/login",
   authMiddlewares.checkNotAuthenticated,
@@ -12,10 +12,11 @@ routes.post(
     failureRedirect: "/api/auth/login/failed",
     failureMessage: true,
     successMessage: true,
+    // assignProperty: "user",
   })
 );
 
-routes.get("/me", authMiddlewares.checkAuthenticated, AuthControllers.me)
+routes.get("/me", authMiddlewares.checkAuthenticated, AuthControllers.me);
 
 routes.get("/login/success", AuthControllers.loginSuccess);
 routes.get("/login/failed", AuthControllers.loginFailed);

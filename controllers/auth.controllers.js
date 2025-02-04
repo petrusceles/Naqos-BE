@@ -1,6 +1,7 @@
 const UserService = require("../services/user.services.js");
 
 const loginSuccess = (req, res) => {
+  console.log(req?.user);
   return res.status(200).json({
     status: "SUCCESS",
     message: "login success",

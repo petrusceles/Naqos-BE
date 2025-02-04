@@ -28,6 +28,9 @@ const createBookingRepo = async ({
 const findAllBookingsRepo = async ({ query, limit, sorted_by, sort, skip }) => {
   console.log("QUERY", query["$and"][1]);
   console.log("QUERY_AFTER", query);
+
+  sort ??= "asc";
+  sorted_by ??= "kost";
   const bookings = await Booking.find(query)
     .populate({
       path: "kost",
@@ -47,7 +50,7 @@ const findAllBookingsRepo = async ({ query, limit, sorted_by, sort, skip }) => {
 };
 
 const findAllBookingsCountRepo = async ({ query }) => {
-  const bookingTotal = await Booking.count(query);
+  const bookingTotal = await Booking.countDocuments(query);
   return bookingTotal;
 };
 // const findBooking

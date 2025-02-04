@@ -21,7 +21,7 @@ passport.use(
         }
         const user = users[0].toObject();
         delete user.password;
-        user.role = user.role.name
+        user.role = user.role.name;
         return done(null, user, { message: "login success" });
       } catch (err) {
         return done(err);

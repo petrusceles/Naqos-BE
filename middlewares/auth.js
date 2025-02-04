@@ -1,4 +1,6 @@
 const checkAuthenticated = (req, res, next) => {
+  console.log("req.user:", req.user); // Log the user object
+  console.log("req.session:", req.session); // Log the session object
   if (!req.isAuthenticated()) {
     return res.status(401).json({
       status: "UNAUTHORIZED",
@@ -10,6 +12,7 @@ const checkAuthenticated = (req, res, next) => {
 };
 
 const checkNotAuthenticated = (req, res, next) => {
+  // console.log("checkNotAuthenticated", req);
   if (req.isAuthenticated()) {
     return res.status(400).json({
       status: "BAD_REQUEST",
