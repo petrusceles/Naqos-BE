@@ -46,7 +46,6 @@ const findUserByNameRepo = async ({ name }) => {
 };
 
 const findUsersByEmailRepo = async ({ email }) => {
-  console.log(email)
   const users = await User.where("email").equals(email).populate("role");
   return users;
 };

@@ -13,7 +13,6 @@ const createBookingService = async ({
   price,
 }) => {
   try {
-    console.log(kost_id);
     if (!user_id || !kost_id || !in_date || !out_date || !time || !price) {
       return {
         status: "BAD_REQUEST",
@@ -424,7 +423,6 @@ const updateBookingByIdService = async ({
         CloudinaryUtils.deleteAllImages([oldProofPhotoPublicId]);
       }
     }
-    console.log(proofPhotoUrl);
 
     const updatedBooking = await BookingRepositories.updateBookingByIdRepo({
       id,

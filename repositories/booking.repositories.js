@@ -26,8 +26,6 @@ const createBookingRepo = async ({
 };
 
 const findAllBookingsRepo = async ({ query, limit, sorted_by, sort, skip }) => {
-  console.log("QUERY", query["$and"][1]);
-  console.log("QUERY_AFTER", query);
 
   sort ??= "asc";
   sorted_by ??= "kost";

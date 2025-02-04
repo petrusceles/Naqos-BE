@@ -258,7 +258,6 @@ const searchAllKostsByKeywordService = async ({
         }
       }
     }
-    console.log(query);
     delete query.is;
 
     if (!query.$and.length) {

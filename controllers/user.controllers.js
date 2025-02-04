@@ -42,7 +42,6 @@ const findAllUser = async (req, res) => {
 
 const updateUserPasswordById = async (req, res) => {
   const id = req.session.passport.user.id;
-  console.log(id);
   // const { status, statusCode, message, data } =
   //   await UserService.findAllUsersService();
   return res.status(statusCode);
@@ -62,7 +61,6 @@ const updateUserById = async (req, res) => {
     bank_number,
     bank_name,
   } = req.body;
-  console.log(req.body);
   const avatar = req.fileEncoded;
   const { status, statusCode, message, data } =
     await UserService.updateUserByIdService({
@@ -80,9 +78,7 @@ const updateUserById = async (req, res) => {
       bank_name,
     });
 
-  console.log("BEFORE", req.session.passport.user);
   req.session.passport.user = data?.updated_user;
-  console.log("AFTER", req.session.passport.user);
   return res.status(statusCode).json({
     status,
     message,
@@ -115,7 +111,6 @@ const userSendEmailVerif = async (req, res) => {
 
 const userVerifEmail = async (req, res) => {
   const { token, id } = req?.query;
-  console.log(req?.query);
   const { status, statusCode, message, data } =
     await UserService.userVerifEmailService({ token, id });
   return res.status(statusCode).json({

@@ -483,7 +483,6 @@ const userVerifEmailService = async ({ token, id }) => {
         token,
       },
     });
-    console.log("STORED TOKEN", storedToken);
 
     if (!storedToken) {
       return {

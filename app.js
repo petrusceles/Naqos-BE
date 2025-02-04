@@ -49,9 +49,7 @@ app.use("/api", routes);
 mongoose
   .connect(process.env.DB_URI)
   .then(() => {
-    app.listen(process.env.PORT || 2000, () => {
-      console.log(`http://localhost:${process.env.PORT || 2000}`);
-    });
+    app.listen(process.env.PORT || 2000);
   })
   .catch((err) => {
     console.log(err);

@@ -59,8 +59,6 @@ const createKost = async (req, res) => {
 
 const searchAllKostsByKeyword = async (req, res) => {
   const { keyword, limit, sorted_by, skip, sort, ...search_by } = req.query;
-  // console.log(skip);
-  console.log("req", req?.query);
   const { status, statusCode, message, data } =
     await KostService.searchAllKostsByKeywordService({
       keyword,
