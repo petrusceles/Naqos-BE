@@ -25,7 +25,7 @@ app.use(limiter);
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: "https://naqos-fe.vercel.app/*",
+    origin: "https://naqos-fe.vercel.app",
     credentials: true,
   })
 );
