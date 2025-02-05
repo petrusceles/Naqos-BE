@@ -6,9 +6,6 @@
   "repository": "https://github.com/petrusceles",
   "author": "petrusceles",
   "license": "MIT",
-  "engines": {
-    "node": ">=v23.5.0"
-  },
   "private": true,
   "dependencies": {
     "bcrypt": "^5.1.0",
