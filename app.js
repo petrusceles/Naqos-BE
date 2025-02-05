@@ -22,17 +22,10 @@ require("dotenv").config();
 app.use(express.json());
 app.use(compression());
 app.use(limiter);
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
-    },
-  })
-);
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: "https://naqos-fe.vercel.app",
+    origin: "https://naqos-fe.vercel.app/*",
     credentials: true,
   })
 );
